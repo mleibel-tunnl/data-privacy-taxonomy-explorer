@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fides Privacy Taxonomy Explorer</title>
+<style>
+.viz-root{
+  color-scheme: light;
+  --surface-1:#fcfcfb; --surface-2:#f2f1ee; --border:#dedcd5;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#78776f;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+}
+:root[data-theme="dark"] .viz-root{
+  color-scheme: dark;
+  --surface-1:#1a1a19; --surface-2:#242423; --border:#3a3a38;
+  --text-primary:#f0efec; --text-secondary:#c3c2b7; --text-muted:#908f85;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#0ca30c; --s7:#9085e9; --s8:#e66767;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--surface-1); color:var(--text-primary);
+}
+.viz-root{min-height:100%;background:var(--surface-1);color:var(--text-primary);
+  display:flex;flex-direction:column;padding:20px 24px 28px;gap:14px}
+header h1{font-size:18px;margin:0 0 2px;font-weight:650;letter-spacing:-.01em}
+header p{margin:0;color:var(--text-secondary);font-size:13px}
+header a{color:var(--text-secondary)}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface-2)}
+.seg button{appearance:none;border:0;background:transparent;padding:7px 13px;font:inherit;font-size:13px;
+  color:var(--text-secondary);cursor:pointer;border-right:1px solid var(--border)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--surface-1);color:var(--text-primary);font-weight:600;
+  box-shadow:inset 0 -2px 0 var(--s1)}
+.seg button:hover{color:var(--text-primary)}
+input[type=search]{font:inherit;font-size:13px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;
+  background:var(--surface-2);color:var(--text-primary);min-width:230px}
+input[type=search]::placeholder{color:var(--text-muted)}
+.spacer{flex:1}
+.ghost{appearance:none;border:1px solid var(--border);background:var(--surface-2);border-radius:8px;
+  padding:7px 12px;font:inherit;font-size:13px;color:var(--text-secondary);cursor:pointer}
+.ghost:hover{color:var(--text-primary)}
+
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;min-height:24px;color:var(--text-muted)}
+.crumbs button{appearance:none;border:0;background:none;font:inherit;color:var(--text-secondary);
+  cursor:pointer;padding:2px 5px;border-radius:5px}
+.crumbs button:hover{background:var(--surface-2);color:var(--text-primary)}
+.crumbs .sep{opacity:.5}
+.crumbs .cur{color:var(--text-primary);font-weight:600;padding:2px 5px}
+
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap;max-width:1320px}
+.chartwrap{flex:1 1 560px;min-width:340px;position:relative}
+svg{display:block;width:100%;height:auto;max-height:72vh;touch-action:manipulation}
+svg path.arc{cursor:pointer;stroke:var(--surface-1);stroke-width:2;stroke-linejoin:round;
+  transition:opacity .12s ease}
+svg path.arc:hover{opacity:.82}
+svg path.arc.dim{opacity:.18}
+svg path.arc.hit{stroke:var(--text-primary);stroke-width:2.4}
+svg text.lab{font-size:9.5px;fill:#0b0b0b;pointer-events:none;font-weight:560;
+  paint-order:stroke;stroke:rgba(255,255,255,.72);stroke-width:2.4px;stroke-linejoin:round}
+svg text.center-k{font-size:12px;fill:var(--text-muted);text-anchor:middle;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+svg text.center-n{font-size:15px;fill:var(--text-primary);text-anchor:middle;font-weight:650}
+svg circle.hub{fill:var(--surface-1);cursor:pointer}
+
+.side{flex:0 1 310px;min-width:260px;border:1px solid var(--border);border-radius:10px;
+  background:var(--surface-2);padding:14px 15px}
+.side .kk{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text-secondary);
+  word-break:break-all;margin:0 0 6px}
+.side h3{margin:0 0 6px;font-size:15px}
+.side p{margin:0 0 10px;color:var(--text-secondary);font-size:13px}
+.side dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12.5px}
+.side dt{color:var(--text-muted)}
+.side dd{margin:0;color:var(--text-primary)}
+.side .kids{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:5px}
+.side .kids button{appearance:none;border:1px solid var(--border);background:var(--surface-1);
+  border-radius:999px;padding:3px 9px;font:inherit;font-size:12px;color:var(--text-secondary);cursor:pointer}
+.side .kids button:hover{color:var(--text-primary)}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+
+#tip{position:fixed;z-index:30;pointer-events:none;max-width:290px;padding:9px 11px;border-radius:8px;
+  background:var(--surface-1);border:1px solid var(--border);box-shadow:0 6px 22px rgba(0,0,0,.16);
+  font-size:12.5px;opacity:0;transition:opacity .1s}
+#tip .t{font-weight:650;margin-bottom:2px}
+#tip .k{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--text-secondary)}
+#tip .d{color:var(--text-secondary);margin-top:5px}
+
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--text-muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;
+  position:sticky;top:0;background:var(--surface-1)}
+td.k{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:nowrap}
+td.d{color:var(--text-secondary)}
+.tablewrap{max-height:72vh;overflow:auto;border:1px solid var(--border);border-radius:10px;width:100%}
+.hidden{display:none !important}
+
+/* ?embed — compact layout for an iframe (e.g. a Notion embed block) */
+.viz-root.embed{padding:10px 12px 10px;gap:10px}
+.viz-root.embed header{display:none}
+.viz-root.embed .stage{gap:14px}
+.viz-root.embed .side{flex-basis:100%}
+.viz-root.embed footer{padding-top:8px;font-size:11.5px}
+a.ghost{text-decoration:none}
+footer{color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);padding-top:12px}
+footer code{font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="viz-root">
+  <header>
+    <h1>Fides Privacy Taxonomy Explorer</h1>
+    <p>Local sunburst over the Fideslang default taxonomy — click a wedge to zoom, click the hub to go back.</p>
+  </header>
+
+  <div class="controls">
+    <div class="seg" id="taxpick" role="group" aria-label="Taxonomy"></div>
+    <input type="search" id="q" placeholder="Search name, key or description…" aria-label="Search taxonomy">
+    <span class="spacer"></span>
+    <button class="ghost" id="viewtoggle" aria-pressed="false">Table view</button>
+    <button class="ghost" id="themetoggle">Dark</button>
+    <a class="ghost hidden" id="fullview" target="_blank" rel="noopener">Open full view ↗</a>
+  </div>
+
+  <div class="crumbs" id="crumbs"></div>
+
+  <div class="stage" id="chartstage">
+    <div class="chartwrap">
+      <svg id="sun" viewBox="-500 -500 1000 1000" role="img" aria-label="Sunburst of the selected taxonomy"></svg>
+    </div>
+    <aside class="side" id="side"></aside>
+  </div>
+
+  <div class="tablewrap hidden" id="tablestage"><table id="tbl"></table></div>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const TAXONOMY = {"__version__":"3.1.4","data_category":{"label":"Data Categories","subtitle":"What kind of data it is","nodes":[{"key":"system","name":"System Data","description":"Data unique to, and under control of the system.","parent":null},{"key":"system.authentication","name":"Authentication Data","description":"Data used to manage access to the system.","parent":"system"},{"key":"system.operations","name":"Operations Data","description":"Data used for system operations.","parent":"system"},{"key":"user","name":"User Data","description":"Data related to the user of the system, either provided directly or derived based on their usage.","parent":null},{"key":"user.account","name":"Account Information","description":"Account creation or registration information.","parent":"user"},{"key":"user.authorization","name":"Authorization Information","description":"Scope of permissions and access to a system.","parent":"user"},{"key":"user.behavior","name":"Observed Behavior","description":"Behavioral data about the subject.","parent":"user"},{"key":"user.biometric","name":"Biometric Data","description":"Encoded characteristics provided by a user.","parent":"user"},{"key":"user.childrens","name":"Children's Data","description":"Data relating to children.","parent":"user"},{"key":"user.contact","name":"Contact Data","description":"Contact data collected about a user.","parent":"user"},{"key":"user.content","name":"User Content","description":"Content related to, or created by the subject.","parent":"user"},{"key":"user.demographic","name":"Demographic Data","description":"Demographic data about a user.","parent":"user"},{"key":"user.location","name":"Location Data","description":"Records of the location of a user.","parent":"user"},{"key":"user.device","name":"Device Data","description":"Data related to a user's device, configuration and setting.","parent":"user"},{"key":"user.payment","name":"Payment Data","description":"Payment data related to user.","parent":"user"},{"key":"user.social","name":"Social Data","description":"Social activity and interaction data.","parent":"user"},{"key":"user.unique_id","name":"Unique ID","description":"Unique identifier for a user assigned through system use.","parent":"user"},{"key":"user.telemetry","name":"Telemetry Data","description":"User identifiable measurement data from system sensors and monitoring.","parent":"user"},{"key":"user.user_sensor","name":"User Sensor Data","description":"Measurement data about a user's environment through system use.","parent":"user"},{"key":"user.workplace","name":"Workplace","description":"Organization of employment.","parent":"user"},{"key":"user.sensor","name":"Sensor Data","description":"Measurement data from sensors and monitoring systems.","parent":"user"},{"key":"user.financial","name":"Financial Data","description":"Payment data and financial history.","parent":"user"},{"key":"user.government_id","name":"Government ID","description":"State provided identification data.","parent":"user"},{"key":"user.health_and_medical","name":"Health and Medical Data","description":"Health records or individual's personal medical information.","parent":"user"},{"key":"user.name","name":"Name","description":"User's real name.","parent":"user"},{"key":"user.criminal_history","name":"Criminal History","description":"Criminal records or information about the data subject.","parent":"user"},{"key":"user.privacy_preferences","name":"Privacy Preferences","description":"Privacy preferences or settings set by the subject.","parent":"user"},{"key":"user.job_title","name":"Job Title","description":"Professional data.","parent":"user"},{"key":"user.account.settings","name":"Account Settings","description":"Account preferences and settings.","parent":"user.account"},{"key":"user.account.username","name":"Account Username","description":"Username associated with account.","parent":"user.account"},{"key":"user.authorization.credentials","name":"Account password","description":"Authentication credentials to a system.","parent":"user.authorization"},{"key":"user.authorization.biometric","name":"Biometric Credentials","description":"Credentials for system authentication.","parent":"user.authorization"},{"key":"user.authorization.password","name":"Password","description":"Password for system authentication.","parent":"user.authorization"},{"key":"user.behavior.browsing_history","name":"Browsing History","description":"Content browsing history of a user.","parent":"user.behavior"},{"key":"user.behavior.media_consumption","name":"Media Consumption","description":"Content consumption history of the subject.","parent":"user.behavior"},{"key":"user.behavior.purchase_history","name":"Purchase History","description":"Purchase history of the subject.","parent":"user.behavior"},{"key":"user.behavior.search_history","name":"Search History","description":"Search history of the subject.","parent":"user.behavior"},{"key":"user.biometric.fingerprint","name":"Fingerprint","description":"Fingerprint encoded data about a subject.","parent":"user.biometric"},{"key":"user.biometric.retinal","name":"Retina Scan","description":"Retinal data about a subject.","parent":"user.biometric"},{"key":"user.biometric.voice","name":"Voice Recording","description":"Voice encoded data about a subject.","parent":"user.biometric"},{"key":"user.biometric.health","name":"Biometric Health Data","description":"Encoded characteristic collected about a user.","parent":"user.biometric"},{"key":"user.contact.address","name":"User Contact Address","description":"Contact address data collected about a user.","parent":"user.contact"},{"key":"user.contact.email","name":"User Contact Email","description":"User's contact email address.","parent":"user.contact"},{"key":"user.contact.phone_number","name":"User Contact Phone Number","description":"User's phone number.","parent":"user.contact"},{"key":"user.contact.url","name":"User Website","description":"Subject's websites or links to social and personal profiles.","parent":"user.contact"},{"key":"user.contact.fax_number","name":"Fax Number","description":"Data Subject's fax number.","parent":"user.contact"},{"key":"user.contact.organization","name":"Organization","description":"Data Subject's Organization.","parent":"user.contact"},{"key":"user.contact.address.city","name":"User Contact City","description":"User's city level address data.","parent":"user.contact.address"},{"key":"user.contact.address.country","name":"User Contact Country","description":"User's country level address data.","parent":"user.contact.address"},{"key":"user.contact.address.postal_code","name":"User Contact Postal Code","description":"User's postal code.","parent":"user.contact.address"},{"key":"user.contact.address.state","name":"User Contact State","description":"User's state level address data.","parent":"user.contact.address"},{"key":"user.contact.address.street","name":"User Contact Street","description":"User's street level address data.","parent":"user.contact.address"},{"key":"user.content.private","name":"Private Content","description":"Private content related to, or created by the subject, not publicly available.","parent":"user.content"},{"key":"user.content.public","name":"Public Content","description":"Publicly shared Content related to, or created by the subject.","parent":"user.content"},{"key":"user.content.self_image","name":"User Image","description":"Photograph or image in which subject is whole or partially recognized.","parent":"user.content"},{"key":"user.demographic.age_range","name":"Age Range","description":"Non specific age or age-range of data subject.","parent":"user.demographic"},{"key":"user.demographic.date_of_birth","name":"Birth Date","description":"Date of birth of data subject.","parent":"user.demographic"},{"key":"user.demographic.gender","name":"Gender","description":"Gender of data subject.","parent":"user.demographic"},{"key":"user.demographic.language","name":"Language","description":"Spoken or written language of subject.","parent":"user.demographic"},{"key":"user.demographic.marital_status","name":"Marital Status","description":"Marital status of data subject.","parent":"user.demographic"},{"key":"user.demographic.political_opinion","name":"Political Opinion","description":"Political opinion or belief of data subject.","parent":"user.demographic"},{"key":"user.demographic.profile","name":"User Profile Data","description":"Profile or preference information about the data subject.","parent":"user.demographic"},{"key":"user.demographic.race_ethnicity","name":"Race","description":"Race or ethnicity of data subject.","parent":"user.demographic"},{"key":"user.demographic.religious_belief","name":"Religion","description":"Religion or religious beliefs of the data subject.","parent":"user.demographic"},{"key":"user.demographic.sexual_orientation","name":"Sexual Orientation","description":"Sexual orientation of data subject.","parent":"user.demographic"},{"key":"user.device.cookie","name":"Device Cookie","description":"Data related to a subject, stored within a cookie.","parent":"user.device"},{"key":"user.device.cookie_id","name":"Cookie ID","description":"Cookie unique identification number.","parent":"user.device"},{"key":"user.device.device_id","name":"Device ID","description":"Device unique identification number.","parent":"user.device"},{"key":"user.device.ip_address","name":"IP Address","description":"Unique identifier related to device connection.","parent":"user.device"},{"key":"user.financial.bank_account","name":"Bank Account Information","description":"Bank account information belonging to the subject.","parent":"user.financial"},{"key":"user.financial.credit_card","name":"Credit Card Information","description":"Credit card information belonging to the subject.","parent":"user.financial"},{"key":"user.government_id.birth_certificate","name":"Birth Certificate","description":"State issued certificate of birth.","parent":"user.government_id"},{"key":"user.government_id.drivers_license_number","name":"Driver's License Number","description":"State issued driving identification number.","parent":"user.government_id"},{"key":"user.government_id.immigration","name":"Immigration ID","description":"State issued immigration or residency data.","parent":"user.government_id"},{"key":"user.government_id.national_identification_number","name":"National Identification Number","description":"State issued personal identification number.","parent":"user.government_id"},{"key":"user.government_id.passport_number","name":"Passport Number","description":"State issued passport data.","parent":"user.government_id"},{"key":"user.government_id.vehicle_registration","name":"Vehicle Registration","description":"State issued license plate or vehicle registration data.","parent":"user.government_id"},{"key":"user.health_and_medical.genetic","name":"User's Genetic Data","description":"Data about the genetic makeup provided by the subject.","parent":"user.health_and_medical"},{"key":"user.health_and_medical.insurance_beneficiary_id","name":"Medical Insurance ID","description":"Health insurance beneficiary number of the subject.","parent":"user.health_and_medical"},{"key":"user.health_and_medical.record_id","name":"Medical Record ID","description":"Medical record identifiers belonging to a subject.","parent":"user.health_and_medical"},{"key":"user.location.imprecise","name":"Imprecise Subject Location","description":"Imprecise location derived from sensors (more than 500M).","parent":"user.location"},{"key":"user.location.precise","name":"Precise Subject Location","description":"Precise location derived from sensors (less than 500M).","parent":"user.location"},{"key":"user.name.first","name":"First Name","description":"Subject's first name.","parent":"user.name"},{"key":"user.name.last","name":"Last Name","description":"Subject's last, or family, name.","parent":"user.name"},{"key":"user.unique_id.pseudonymous","name":"Pseudonymous User ID","description":"A pseudonymous, or probabilistic identifier generated from other subject or device data belonging to the subject.","parent":"user.unique_id"}]},"data_use":{"label":"Data Uses","subtitle":"What the data is used for","nodes":[{"key":"analytics","name":"Analytics","description":"Provides analytics for activities such as system and advertising performance reporting, insights and fraud detection.","parent":null},{"key":"analytics.reporting","name":"Analytics for Reporting","description":"Provides analytics for general reporting such as system and advertising performance.","parent":"analytics"},{"key":"analytics.reporting.ad_performance","name":"Analytics for Advertising Performance","description":"Provides analytics for reporting of advertising performance.","parent":"analytics.reporting"},{"key":"analytics.reporting.content_performance","name":"Analytics for Content Performance","description":"Analytics for reporting on content performance.","parent":"analytics.reporting"},{"key":"analytics.reporting.campaign_insights","name":"Analytics for Insights","description":"Provides analytics for reporting of campaign insights related to advertising and promotion activities.","parent":"analytics.reporting"},{"key":"analytics.reporting.system","name":"Analytics for System Activity","description":"Provides analytics for reporting on system activity.","parent":"analytics.reporting"},{"key":"analytics.reporting.system.performance","name":"Analytics for System Performance","description":"Provides analytics for reporting on system performance.","parent":"analytics.reporting.system"},{"key":"collect","name":"Collect","description":"Collects or stores data in order to use it for another purpose which has not yet been expressly defined.","parent":null},{"key":"employment","name":"Employment","description":"Processes data for the purpose of recruitment or employment and human resources (HR) related activities.","parent":null},{"key":"employment.recruitment","name":"Employment Recruitment","description":"Processes data of prospective employees for the purpose of recruitment.","parent":"employment"},{"key":"essential","name":"Essential","description":"Operates the service or product, including legal obligations, support and basic system operations.","parent":null},{"key":"essential.fraud_detection","name":"Essential Fraud Detection","description":"Detects possible fraud or misuse of the product, service, application or system.","parent":"essential"},{"key":"essential.legal_obligation","name":"Essential Legal Obligation","description":"Provides service to meet a legal or compliance obligation such as consent management.","parent":"essential"},{"key":"essential.service","name":"Essential for Service","description":"Provides the essential product, service, application or system, without which the product/service would not be possible.","parent":"essential"},{"key":"essential.service.authentication","name":"Essential Service Authentication","description":"Authenticate users to the product, service, application or system.","parent":"essential.service"},{"key":"essential.service.notifications","name":"Essential Service Notifications","description":"Sends notifications about the product, service, application or system.","parent":"essential.service"},{"key":"essential.service.operations","name":"Essential for Operations","description":"Essential to ensure the operation of the product, service, application or system.","parent":"essential.service"},{"key":"essential.service.payment_processing","name":"Essential for Payment Processing","description":"Essential to processes payments for the product, service, application or system.","parent":"essential.service"},{"key":"essential.service.security","name":"Essential for Security","description":"Essential to provide security for the product, service, application or system","parent":"essential.service"},{"key":"essential.service.upgrades","name":"Essential for Service Upgrades","description":"Provides timely system upgrade information options.","parent":"essential.service"},{"key":"essential.service.notifications.email","name":"Essential Email Service Notifications","description":"Sends email notifications about the product, service, application or system.","parent":"essential.service.notifications"},{"key":"essential.service.notifications.sms","name":"Essential SMS Service Notifications","description":"Sends SMS notifications about the product, service, application or system.","parent":"essential.service.notifications"},{"key":"essential.service.operations.support","name":"Essential for Operations Support","description":"Provides support for the product, service, application or system.","parent":"essential.service.operations"},{"key":"essential.service.operations.improve","name":"Essential for Support Improvement","description":"Essential to optimize and improve support for the product, service, application or system.","parent":"essential.service.operations"},{"key":"finance","name":"Finance","description":"Enables finance and accounting activities such as audits and tax reporting.","parent":null},{"key":"functional","name":"Functional","description":"Used for specific, necessary, and legitimate purposes","parent":null},{"key":"functional.storage","name":"Local Data Storage","description":"Stores or accesses information from the device as needed when using a product, service, application, or system","parent":"functional"},{"key":"functional.service","name":"Service","description":"Functions relating to provided services, products, applications or systems.","parent":"functional"},{"key":"functional.service.improve","name":"Improve Service","description":"Improves the specific product, service, application or system.","parent":"functional.service"},{"key":"functional.storage.privacy_preferences","name":"Local Data Storage for Privacy Preferences","description":"Stores or accesses privacy preferences information from the device as needed when using a product, service, application, or system","parent":"functional.storage"},{"key":"marketing","name":"Marketing","description":"Enables marketing, promotion, advertising and sales activities for the product, service, application or system.","parent":null},{"key":"marketing.advertising","name":"Advertising, Marketing or Promotion","description":"Advertises or promotes the product, service, application or system and associated services.","parent":"marketing"},{"key":"marketing.communications","name":"Marketing Communications","description":"Uses combined channels to message and market to a customer, user or prospect.","parent":"marketing"},{"key":"marketing.advertising.first_party","name":"First Party Advertising","description":"Serves advertisements based on first party data collected or derived about the user.","parent":"marketing.advertising"},{"key":"marketing.advertising.frequency_capping","name":"Frequency Capping","description":"Restricts the number of times a specific advertisement is shown to an individual.","parent":"marketing.advertising"},{"key":"marketing.advertising.negative_targeting","name":"Negative Targeting","description":"Enforces rules used to ensure a certain audience or group is not targeted by advertising.","parent":"marketing.advertising"},{"key":"marketing.advertising.profiling","name":"Profiling for Advertising","description":"Creates audience profiles for the purpose of targeted advertising","parent":"marketing.advertising"},{"key":"marketing.advertising.serving","name":"Essential for Serving Ads","description":"Essential to the delivery of advertising and content.","parent":"marketing.advertising"},{"key":"marketing.advertising.third_party","name":"Third Party Advertising","description":"Serves advertisements based on data within the system or joined with data provided by 3rd parties.","parent":"marketing.advertising"},{"key":"marketing.advertising.first_party.contextual","name":"First Party Contextual Advertising","description":"Serves advertisements based on current content being viewed by the user of the system or service.","parent":"marketing.advertising.first_party"},{"key":"marketing.advertising.first_party.targeted","name":"First Party Personalized Advertising","description":"Targets advertisements based on data collected or derived about the user from use of the system.","parent":"marketing.advertising.first_party"},{"key":"marketing.advertising.third_party.targeted","name":"Third Party Targeted Advertising","description":"Targets advertisements based on data within the system or joined with data provided by 3rd parties.","parent":"marketing.advertising.third_party"},{"key":"marketing.communications.email","name":"Marketing Email Communications","description":"Sends email marketing communications.","parent":"marketing.communications"},{"key":"marketing.communications.sms","name":"Marketing SMS Communications","description":"Sends SMS marketing communications.","parent":"marketing.communications"},{"key":"operations","name":"Operations","description":"Supports business processes necessary to the organization's operation.","parent":null},{"key":"personalize","name":"Personalize","description":"Personalizes the product, service, application or system.","parent":null},{"key":"personalize.content","name":"Content Personalization","description":"Personalizes the content of the product, service, application or system.","parent":"personalize"},{"key":"personalize.system","name":"System Personalization","description":"Personalizes the system.","parent":"personalize"},{"key":"personalize.content.limited","name":"Limited Content Personalization","description":"Uses limited data for the purpose of serving content.","parent":"personalize.content"},{"key":"personalize.content.profiling","name":"Profiling for Personalization","description":"Creates profiles for the purpose of serving content.","parent":"personalize.content"},{"key":"personalize.content.profiled","name":"Targeted Content Personalization","description":"Uses profiles for the purpose of serving content.","parent":"personalize.content"},{"key":"sales","name":"Sales","description":"Supports sales activities such as communications and outreach.","parent":null},{"key":"third_party_sharing","name":"Third Party Sharing","description":"Transfers data to third parties outside of the system or service's scope.","parent":null},{"key":"third_party_sharing.legal_obligation","name":"Sharing for Legal Obligation","description":"Shares data for legal obligations, including contracts, applicable laws or regulations.","parent":"third_party_sharing"},{"key":"train_ai_system","name":"Train AI System","description":"Trains an AI system or data model for machine learning.","parent":null}]},"data_subject":{"label":"Data Subjects","subtitle":"Whose data it is","nodes":[{"key":"anonymous_user","name":"Anonymous User","description":"An individual that is unidentifiable to the systems. Note - This should only be applied to truly anonymous users where there is no risk of re-identification","parent":null},{"key":"citizen_voter","name":"Citizen Voter","description":"An individual registered to voter with a state or authority.","parent":null},{"key":"commuter","name":"Commuter","description":"An individual that is traveling or transiting in the context of location tracking.","parent":null},{"key":"consultant","name":"Consultant","description":"An individual employed in a consultative/temporary capacity by the organization.","parent":null},{"key":"customer","name":"Customer","description":"An individual or other organization that purchases goods or services from the organization.","parent":null},{"key":"employee","name":"Employee","description":"An individual employed by the organization.","parent":null},{"key":"job_applicant","name":"Job Applicant","description":"An individual applying for employment to the organization.","parent":null},{"key":"next_of_kin","name":"Next of Kin","description":"A relative of any other individual subject where such a relationship is known.","parent":null},{"key":"passenger","name":"Passenger","description":"An individual traveling on some means of provided transport.","parent":null},{"key":"patient","name":"Patient","description":"An individual identified for the purposes of any medical care.","parent":null},{"key":"prospect","name":"Prospect","description":"An individual or organization to whom an organization is selling goods or services.","parent":null},{"key":"shareholder","name":"Shareholder","description":"An individual or organization that holds equity in the organization.","parent":null},{"key":"supplier_vendor","name":"Supplier/Vendor","description":"An individual or organization that provides services or goods to the organization.","parent":null},{"key":"trainee","name":"Trainee","description":"An individual undergoing training by the organization.","parent":null},{"key":"visitor","name":"Visitor","description":"An individual visiting a location.","parent":null}]}};
+</script>
+<script>
+(function(){
+"use strict";
+const PAL = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'];
+const TAU = Math.PI*2;
+const svg = document.getElementById('sun');
+const tip = document.getElementById('tip');
+const side = document.getElementById('side');
+const crumbs = document.getElementById('crumbs');
+const qEl = document.getElementById('q');
+
+// URL options: ?embed (compact iframe layout), ?tax=data_use, ?theme=dark|light
+const P = new URLSearchParams(location.search);
+const EMBED = P.has('embed');
+
+let taxKey = (P.get('tax') && TAXONOMY[P.get('tax')] && P.get('tax').indexOf('__')!==0)
+  ? P.get('tax') : 'data_category';
+let roots = {};       // built trees per taxonomy
+let focus = null;     // node currently zoomed to
+let query = '';
+
+/* ---------- build trees ---------- */
+function build(key){
+  const def = TAXONOMY[key];
+  const byKey = new Map();
+  const virtual = {key:'__root__', name:def.label, description:def.subtitle, parent:null, children:[], depth:0};
+  def.nodes.forEach(n => byKey.set(n.key, Object.assign({}, n, {children:[], depth:0})));
+  byKey.forEach(n => {
+    const p = n.parent ? byKey.get(n.parent) : virtual;
+    (p || virtual).children.push(n);
+    n._p = p || virtual;
+  });
+  // depth + leaf weight
+  (function walk(n, d){
+    n.depth = d; n.leaves = 0;
+    n.children.sort((a,b)=> a.name.localeCompare(b.name));
+    if(!n.children.length){ n.leaves = 1; return; }
+    n.children.forEach(c => { walk(c, d+1); n.leaves += c.leaves; });
+  })(virtual, 0);
+  // Seed hues at the shallowest level that actually has branches to tell apart
+  // (data_category has only 2 roots, so seeding at depth 1 would paint it one colour).
+  let seedLevel = 1, seeds = virtual.children;
+  while(seeds.length < 3 && seedLevel < 3){
+    const next = seeds.flatMap(s => s.children);
+    if(!next.length) break;
+    seeds = next; seedLevel++;
+  }
+  virtual.seedLevel = seedLevel;
+  seeds.forEach((c,i) => assignColor(c, i, seedLevel));
+  virtual.children.forEach(function grey(n){
+    if(n.depth < seedLevel){ n.slot = -1; n.band = 0; n.children.forEach(grey); }
+  });
+  virtual.total = def.nodes.length;
+  virtual.maxDepth = (function md(n){ return n.children.length ? 1+Math.max(...n.children.map(md)) : 0; })(virtual);
+  return virtual;
+}
+function assignColor(node, i, seedLevel){
+  // >8 branches: extend with a second lightness band rather than cycling raw hues,
+  // so the same hue+shade never repeats within a ring.
+  const band = Math.floor(i / PAL.length);
+  const slot = (i % PAL.length);
+  (function paint(x){ x.slot = slot; x.band = band; x.seedLevel = seedLevel; x.children.forEach(paint); })(node);
+}
+function hueOf(node){
+  if(node.slot === -1 || node.slot === undefined)
+    return 'color-mix(in oklab, var(--text-muted) 32%, var(--surface-1))';
+  const base = `var(${PAL[node.slot]})`;
+  const rel = Math.max(0, node.depth - (node.seedLevel||1));
+  const lighten = Math.min(0.64, rel*0.19 + (node.band ? 0.32 : 0));
+  return lighten <= 0 ? base
+    : `color-mix(in oklab, ${base} ${Math.round((1-lighten)*100)}%, var(--surface-1))`;
+}
+
+/* ---------- layout ---------- */
+function layout(root, f){
+  // angular extents relative to focus f: f spans full circle
+  const out = [];
+  const depth0 = f.depth;
+  const maxRings = 4;
+  function rec(n, a0, a1){
+    const rel = n.depth - depth0;
+    if(rel >= 0 && rel <= maxRings && n !== f){
+      out.push({n, a0, a1, ring: rel});
+    }
+    if(rel >= maxRings) return;
+    let a = a0;
+    const span = a1 - a0;
+    n.children.forEach(c => {
+      const w = span * (c.leaves / n.leaves);
+      rec(c, a, a + w);
+      a += w;
+    });
+  }
+  rec(f, 0, TAU);
+  return out;
+}
+function arcPath(a0,a1,r0,r1){
+  const pad = Math.min(0.0045, (a1-a0)/6);
+  a0+=pad; a1-=pad;
+  if(a1<=a0) return '';
+  const full = (a1-a0) >= TAU-1e-6;
+  const x=(r,a)=>[ (r*Math.sin(a)).toFixed(2), (-r*Math.cos(a)).toFixed(2) ];
+  if(full){
+    return `M0,${-r1}A${r1},${r1} 0 1 1 0,${r1}A${r1},${r1} 0 1 1 0,${-r1}`+
+           `M0,${-r0}A${r0},${r0} 0 1 0 0,${r0}A${r0},${r0} 0 1 0 0,${-r0}Z`;
+  }
+  const big = (a1-a0) > Math.PI ? 1 : 0;
+  const [x0,y0]=x(r1,a0), [x1,y1]=x(r1,a1), [x2,y2]=x(r0,a1), [x3,y3]=x(r0,a0);
+  return `M${x0},${y0}A${r1},${r1} 0 ${big} 1 ${x1},${y1}L${x2},${y2}A${r0},${r0} 0 ${big} 0 ${x3},${y3}Z`;
+}
+
+/* ---------- render ---------- */
+const R0 = 118, RW = 92;
+function render(){
+  const root = roots[taxKey];
+  const f = focus || root;
+  const segs = layout(root, f);
+  const ql = query.trim().toLowerCase();
+  let parts = [];
+
+  segs.forEach(s => {
+    const r0 = R0 + (s.ring-1)*RW, r1 = r0 + RW;
+    const d = arcPath(s.a0, s.a1, r0, r1);
+    if(!d) return;
+    const hit = ql && matches(s.n, ql);
+    const cls = 'arc' + (ql ? (hit ? ' hit' : ' dim') : '');
+    parts.push(`<path class="${cls}" d="${d}" fill="${hueOf(s.n)}" data-k="${esc(s.n.key)}"></path>`);
+  });
+
+  // labels for wedges with room
+  segs.forEach(s => {
+    const span = s.a1 - s.a0;
+    const r0 = R0 + (s.ring-1)*RW, r1 = r0 + RW;
+    const rm = (r0+r1)/2;
+    if(span * rm < 34) return;
+    const mid = (s.a0+s.a1)/2;
+    const px = (rm*Math.sin(mid)).toFixed(2), py = (-rm*Math.cos(mid)).toFixed(2);
+    let deg = mid*180/Math.PI - 90;
+    let flip = 0;
+    if(deg > 90){ deg -= 180; flip = 1; }
+    if(deg < -90){ deg += 180; flip = 1; }
+    const maxChars = Math.max(3, Math.floor((span*rm)/5.4));
+    let txt = s.n.name;
+    if(txt.length > maxChars) txt = txt.slice(0, Math.max(3,maxChars-1)).trimEnd()+'…';
+    parts.push(`<g transform="translate(${px},${py}) rotate(${deg.toFixed(1)})"><text class="lab" text-anchor="middle" dy="3.4">${esc(txt)}</text></g>`);
+  });
+
+  // hub
+  const hubName = f === root ? TAXONOMY[taxKey].label : f.name;
+  const hubKey  = f === root ? `${f.total} terms` : f.key;
+  parts.push(`<circle class="hub" r="${R0-6}" data-up="1"></circle>`);
+  parts.push(`<text class="center-n" y="-2">${esc(clip(hubName,22))}</text>`);
+  parts.push(`<text class="center-k" y="18">${esc(clip(hubKey,26))}</text>`);
+  if(f !== root) parts.push(`<text class="center-k" y="36">↑ click to zoom out</text>`);
+
+  svg.innerHTML = parts.join('');
+  drawCrumbs(f, root);
+  showDetail(f, root);
+}
+function matches(n,q){
+  return n.key.toLowerCase().includes(q) || n.name.toLowerCase().includes(q) ||
+         (n.description||'').toLowerCase().includes(q);
+}
+function clip(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function drawCrumbs(f, root){
+  const chain = [];
+  for(let n=f; n; n=n._p) chain.unshift(n);
+  crumbs.innerHTML = chain.map((n,i) => {
+    const label = n===root ? TAXONOMY[taxKey].label : n.name;
+    return i === chain.length-1
+      ? `<span class="cur">${esc(label)}</span>`
+      : `<button data-k="${esc(n.key)}">${esc(label)}</button><span class="sep">›</span>`;
+  }).join('');
+}
+
+function showDetail(n, root){
+  const isRoot = n === root;
+  const kids = n.children;
+  side.innerHTML = `
+    ${isRoot ? '' : `<p class="kk"><span class="swatch" style="background:${hueOf(n)}"></span>${esc(n.key)}</p>`}
+    <h3>${esc(isRoot ? TAXONOMY[taxKey].label : n.name)}</h3>
+    <p>${esc(n.description || '—')}</p>
+    <dl>
+      <dt>Direct children</dt><dd>${kids.length}</dd>
+      <dt>Leaf terms below</dt><dd>${n.leaves}</dd>
+      ${isRoot ? `<dt>Total terms</dt><dd>${n.total}</dd><dt>Max depth</dt><dd>${n.maxDepth}</dd>` : `<dt>Level</dt><dd>${n.depth}</dd>`}
+    </dl>
+    ${kids.length ? `<ul class="kids">${kids.map(c=>`<li><button data-k="${esc(c.key)}">${esc(c.name)}</button></li>`).join('')}</ul>` : ''}
+  `;
+}
+
+/* ---------- interaction ---------- */
+function findNode(key){
+  let hit = null;
+  (function w(n){ if(hit) return; if(n.key===key){hit=n;return;} n.children.forEach(w); })(roots[taxKey]);
+  return hit;
+}
+svg.addEventListener('click', e => {
+  const up = e.target.closest('[data-up]');
+  if(up){ const f = focus || roots[taxKey]; focus = f._p || roots[taxKey]; render(); return; }
+  const p = e.target.closest('path.arc');
+  if(!p) return;
+  const n = findNode(p.dataset.k);
+  if(!n) return;
+  if(n.children.length) { focus = n; render(); }
+  else { showDetail(n, roots[taxKey]); drawCrumbs(n, roots[taxKey]); }
+});
+svg.addEventListener('mousemove', e => {
+  const p = e.target.closest('path.arc');
+  if(!p){ tip.style.opacity = 0; return; }
+  const n = findNode(p.dataset.k); if(!n) return;
+  tip.innerHTML = `<div class="t">${esc(n.name)}</div><div class="k">${esc(n.key)}</div>`+
+    (n.description? `<div class="d">${esc(n.description)}</div>`:'')+
+    (n.children.length? `<div class="d">${n.children.length} children · ${n.leaves} leaf terms</div>`:'');
+  tip.style.opacity = 1;
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if(x + w > innerWidth - 8) x = e.clientX - w - pad;
+  if(y + h > innerHeight - 8) y = e.clientY - h - pad;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+});
+svg.addEventListener('mouseleave', () => tip.style.opacity = 0);
+document.addEventListener('click', e => {
+  const b = e.target.closest('.crumbs button, .kids button');
+  if(!b) return;
+  const n = b.dataset.k === '__root__' ? roots[taxKey] : findNode(b.dataset.k);
+  if(n){ focus = n.children.length ? n : n._p; render(); if(!n.children.length) showDetail(n, roots[taxKey]); }
+});
+
+/* ---------- taxonomy picker, search, table, theme ---------- */
+const pick = document.getElementById('taxpick');
+pick.innerHTML = Object.keys(TAXONOMY).filter(k => k.indexOf('__')!==0).map(k =>
+  `<button data-t="${k}" aria-pressed="${k===taxKey}">${esc(TAXONOMY[k].label)}</button>`).join('');
+pick.addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  taxKey = b.dataset.t; focus = null;
+  [...pick.children].forEach(c => c.setAttribute('aria-pressed', c.dataset.t===taxKey));
+  render(); renderTable();
+});
+qEl.addEventListener('input', () => { query = qEl.value; render(); renderTable(); });
+
+function renderTable(){
+  const def = TAXONOMY[taxKey];
+  const ql = query.trim().toLowerCase();
+  const rows = def.nodes.filter(n => !ql || n.key.toLowerCase().includes(ql) ||
+      n.name.toLowerCase().includes(ql) || (n.description||'').toLowerCase().includes(ql));
+  document.getElementById('tbl').innerHTML =
+    `<thead><tr><th>Fides key</th><th>Name</th><th>Parent</th><th>Description</th></tr></thead><tbody>`+
+    (rows.length ? rows.map(n=>`<tr><td class="k">${esc(n.key)}</td><td>${esc(n.name)}</td>`+
+      `<td class="k">${esc(n.parent||'—')}</td><td class="d">${esc(n.description||'')}</td></tr>`).join('')
+      : `<tr><td colspan="4" class="d">No terms in ${esc(def.label)} match “${esc(query)}”.</td></tr>`)+
+    `</tbody>`;
+  // show where the matches actually live
+  [...pick.children].forEach(b => {
+    const t = TAXONOMY[b.dataset.t];
+    const c = ql ? t.nodes.filter(n => n.key.toLowerCase().includes(ql) ||
+        n.name.toLowerCase().includes(ql) || (n.description||'').toLowerCase().includes(ql)).length : null;
+    b.textContent = t.label + (c===null ? '' : ` (${c})`);
+  });
+}
+const vt = document.getElementById('viewtoggle');
+vt.addEventListener('click', () => {
+  const on = vt.getAttribute('aria-pressed') !== 'true';
+  vt.setAttribute('aria-pressed', on);
+  vt.textContent = on ? 'Sunburst view' : 'Table view';
+  document.getElementById('chartstage').classList.toggle('hidden', on);
+  document.getElementById('tablestage').classList.toggle('hidden', !on);
+});
+const tt = document.getElementById('themetoggle');
+if(matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme='dark';
+if(P.get('theme')==='dark' || P.get('theme')==='light') document.documentElement.dataset.theme = P.get('theme');
+function syncTheme(){ tt.textContent = document.documentElement.dataset.theme==='dark' ? 'Light' : 'Dark'; }
+tt.addEventListener('click', () => {
+  document.documentElement.dataset.theme = document.documentElement.dataset.theme==='dark'?'light':'dark';
+  syncTheme(); render();
+});
+syncTheme();
+
+if(EMBED){
+  document.querySelector('.viz-root').classList.add('embed');
+  const full = new URL(location.href); full.searchParams.delete('embed');
+  const fv = document.getElementById('fullview');
+  fv.href = full.href; fv.classList.remove('hidden');
+}
+document.getElementById('foot').innerHTML = EMBED
+  ? 'Data: Fideslang default taxonomy (<code>fideslang ' + esc(TAXONOMY.__version__||'3.1.4') +
+    '</code>), IAB Tech Lab, Apache-2.0. Wedge size = leaf terms beneath a node.'
+  : 'Data: Fideslang default taxonomy (<code>fideslang ' + (TAXONOMY.__version__||'3.1.4') +
+  '</code> from PyPI; same content as <code>IABTechLab/fideslang → data_files/</code>). ' +
+  'Wedge size = number of leaf terms beneath a node, matching the IAB Tech Lab sunburst. ' +
+  'Hue is seeded at the first level with real branching (grey rings sit above it); ' +
+  'lighter shades = deeper levels. Table view carries every term, key, parent and description.';
+
+Object.keys(TAXONOMY).forEach(k => { if(k.indexOf('__')!==0) roots[k] = build(k); });
+render(); renderTable();
+})();
+</script>
+</body>
+</html>

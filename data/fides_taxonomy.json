@@ -1,0 +1,951 @@
+{
+ "__version__": "3.1.4",
+ "data_category": {
+  "label": "Data Categories",
+  "subtitle": "What kind of data it is",
+  "nodes": [
+   {
+    "key": "system",
+    "name": "System Data",
+    "description": "Data unique to, and under control of the system.",
+    "parent": null
+   },
+   {
+    "key": "system.authentication",
+    "name": "Authentication Data",
+    "description": "Data used to manage access to the system.",
+    "parent": "system"
+   },
+   {
+    "key": "system.operations",
+    "name": "Operations Data",
+    "description": "Data used for system operations.",
+    "parent": "system"
+   },
+   {
+    "key": "user",
+    "name": "User Data",
+    "description": "Data related to the user of the system, either provided directly or derived based on their usage.",
+    "parent": null
+   },
+   {
+    "key": "user.account",
+    "name": "Account Information",
+    "description": "Account creation or registration information.",
+    "parent": "user"
+   },
+   {
+    "key": "user.authorization",
+    "name": "Authorization Information",
+    "description": "Scope of permissions and access to a system.",
+    "parent": "user"
+   },
+   {
+    "key": "user.behavior",
+    "name": "Observed Behavior",
+    "description": "Behavioral data about the subject.",
+    "parent": "user"
+   },
+   {
+    "key": "user.biometric",
+    "name": "Biometric Data",
+    "description": "Encoded characteristics provided by a user.",
+    "parent": "user"
+   },
+   {
+    "key": "user.childrens",
+    "name": "Children's Data",
+    "description": "Data relating to children.",
+    "parent": "user"
+   },
+   {
+    "key": "user.contact",
+    "name": "Contact Data",
+    "description": "Contact data collected about a user.",
+    "parent": "user"
+   },
+   {
+    "key": "user.content",
+    "name": "User Content",
+    "description": "Content related to, or created by the subject.",
+    "parent": "user"
+   },
+   {
+    "key": "user.demographic",
+    "name": "Demographic Data",
+    "description": "Demographic data about a user.",
+    "parent": "user"
+   },
+   {
+    "key": "user.location",
+    "name": "Location Data",
+    "description": "Records of the location of a user.",
+    "parent": "user"
+   },
+   {
+    "key": "user.device",
+    "name": "Device Data",
+    "description": "Data related to a user's device, configuration and setting.",
+    "parent": "user"
+   },
+   {
+    "key": "user.payment",
+    "name": "Payment Data",
+    "description": "Payment data related to user.",
+    "parent": "user"
+   },
+   {
+    "key": "user.social",
+    "name": "Social Data",
+    "description": "Social activity and interaction data.",
+    "parent": "user"
+   },
+   {
+    "key": "user.unique_id",
+    "name": "Unique ID",
+    "description": "Unique identifier for a user assigned through system use.",
+    "parent": "user"
+   },
+   {
+    "key": "user.telemetry",
+    "name": "Telemetry Data",
+    "description": "User identifiable measurement data from system sensors and monitoring.",
+    "parent": "user"
+   },
+   {
+    "key": "user.user_sensor",
+    "name": "User Sensor Data",
+    "description": "Measurement data about a user's environment through system use.",
+    "parent": "user"
+   },
+   {
+    "key": "user.workplace",
+    "name": "Workplace",
+    "description": "Organization of employment.",
+    "parent": "user"
+   },
+   {
+    "key": "user.sensor",
+    "name": "Sensor Data",
+    "description": "Measurement data from sensors and monitoring systems.",
+    "parent": "user"
+   },
+   {
+    "key": "user.financial",
+    "name": "Financial Data",
+    "description": "Payment data and financial history.",
+    "parent": "user"
+   },
+   {
+    "key": "user.government_id",
+    "name": "Government ID",
+    "description": "State provided identification data.",
+    "parent": "user"
+   },
+   {
+    "key": "user.health_and_medical",
+    "name": "Health and Medical Data",
+    "description": "Health records or individual's personal medical information.",
+    "parent": "user"
+   },
+   {
+    "key": "user.name",
+    "name": "Name",
+    "description": "User's real name.",
+    "parent": "user"
+   },
+   {
+    "key": "user.criminal_history",
+    "name": "Criminal History",
+    "description": "Criminal records or information about the data subject.",
+    "parent": "user"
+   },
+   {
+    "key": "user.privacy_preferences",
+    "name": "Privacy Preferences",
+    "description": "Privacy preferences or settings set by the subject.",
+    "parent": "user"
+   },
+   {
+    "key": "user.job_title",
+    "name": "Job Title",
+    "description": "Professional data.",
+    "parent": "user"
+   },
+   {
+    "key": "user.account.settings",
+    "name": "Account Settings",
+    "description": "Account preferences and settings.",
+    "parent": "user.account"
+   },
+   {
+    "key": "user.account.username",
+    "name": "Account Username",
+    "description": "Username associated with account.",
+    "parent": "user.account"
+   },
+   {
+    "key": "user.authorization.credentials",
+    "name": "Account password",
+    "description": "Authentication credentials to a system.",
+    "parent": "user.authorization"
+   },
+   {
+    "key": "user.authorization.biometric",
+    "name": "Biometric Credentials",
+    "description": "Credentials for system authentication.",
+    "parent": "user.authorization"
+   },
+   {
+    "key": "user.authorization.password",
+    "name": "Password",
+    "description": "Password for system authentication.",
+    "parent": "user.authorization"
+   },
+   {
+    "key": "user.behavior.browsing_history",
+    "name": "Browsing History",
+    "description": "Content browsing history of a user.",
+    "parent": "user.behavior"
+   },
+   {
+    "key": "user.behavior.media_consumption",
+    "name": "Media Consumption",
+    "description": "Content consumption history of the subject.",
+    "parent": "user.behavior"
+   },
+   {
+    "key": "user.behavior.purchase_history",
+    "name": "Purchase History",
+    "description": "Purchase history of the subject.",
+    "parent": "user.behavior"
+   },
+   {
+    "key": "user.behavior.search_history",
+    "name": "Search History",
+    "description": "Search history of the subject.",
+    "parent": "user.behavior"
+   },
+   {
+    "key": "user.biometric.fingerprint",
+    "name": "Fingerprint",
+    "description": "Fingerprint encoded data about a subject.",
+    "parent": "user.biometric"
+   },
+   {
+    "key": "user.biometric.retinal",
+    "name": "Retina Scan",
+    "description": "Retinal data about a subject.",
+    "parent": "user.biometric"
+   },
+   {
+    "key": "user.biometric.voice",
+    "name": "Voice Recording",
+    "description": "Voice encoded data about a subject.",
+    "parent": "user.biometric"
+   },
+   {
+    "key": "user.biometric.health",
+    "name": "Biometric Health Data",
+    "description": "Encoded characteristic collected about a user.",
+    "parent": "user.biometric"
+   },
+   {
+    "key": "user.contact.address",
+    "name": "User Contact Address",
+    "description": "Contact address data collected about a user.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.email",
+    "name": "User Contact Email",
+    "description": "User's contact email address.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.phone_number",
+    "name": "User Contact Phone Number",
+    "description": "User's phone number.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.url",
+    "name": "User Website",
+    "description": "Subject's websites or links to social and personal profiles.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.fax_number",
+    "name": "Fax Number",
+    "description": "Data Subject's fax number.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.organization",
+    "name": "Organization",
+    "description": "Data Subject's Organization.",
+    "parent": "user.contact"
+   },
+   {
+    "key": "user.contact.address.city",
+    "name": "User Contact City",
+    "description": "User's city level address data.",
+    "parent": "user.contact.address"
+   },
+   {
+    "key": "user.contact.address.country",
+    "name": "User Contact Country",
+    "description": "User's country level address data.",
+    "parent": "user.contact.address"
+   },
+   {
+    "key": "user.contact.address.postal_code",
+    "name": "User Contact Postal Code",
+    "description": "User's postal code.",
+    "parent": "user.contact.address"
+   },
+   {
+    "key": "user.contact.address.state",
+    "name": "User Contact State",
+    "description": "User's state level address data.",
+    "parent": "user.contact.address"
+   },
+   {
+    "key": "user.contact.address.street",
+    "name": "User Contact Street",
+    "description": "User's street level address data.",
+    "parent": "user.contact.address"
+   },
+   {
+    "key": "user.content.private",
+    "name": "Private Content",
+    "description": "Private content related to, or created by the subject, not publicly available.",
+    "parent": "user.content"
+   },
+   {
+    "key": "user.content.public",
+    "name": "Public Content",
+    "description": "Publicly shared Content related to, or created by the subject.",
+    "parent": "user.content"
+   },
+   {
+    "key": "user.content.self_image",
+    "name": "User Image",
+    "description": "Photograph or image in which subject is whole or partially recognized.",
+    "parent": "user.content"
+   },
+   {
+    "key": "user.demographic.age_range",
+    "name": "Age Range",
+    "description": "Non specific age or age-range of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.date_of_birth",
+    "name": "Birth Date",
+    "description": "Date of birth of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.gender",
+    "name": "Gender",
+    "description": "Gender of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.language",
+    "name": "Language",
+    "description": "Spoken or written language of subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.marital_status",
+    "name": "Marital Status",
+    "description": "Marital status of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.political_opinion",
+    "name": "Political Opinion",
+    "description": "Political opinion or belief of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.profile",
+    "name": "User Profile Data",
+    "description": "Profile or preference information about the data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.race_ethnicity",
+    "name": "Race",
+    "description": "Race or ethnicity of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.religious_belief",
+    "name": "Religion",
+    "description": "Religion or religious beliefs of the data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.demographic.sexual_orientation",
+    "name": "Sexual Orientation",
+    "description": "Sexual orientation of data subject.",
+    "parent": "user.demographic"
+   },
+   {
+    "key": "user.device.cookie",
+    "name": "Device Cookie",
+    "description": "Data related to a subject, stored within a cookie.",
+    "parent": "user.device"
+   },
+   {
+    "key": "user.device.cookie_id",
+    "name": "Cookie ID",
+    "description": "Cookie unique identification number.",
+    "parent": "user.device"
+   },
+   {
+    "key": "user.device.device_id",
+    "name": "Device ID",
+    "description": "Device unique identification number.",
+    "parent": "user.device"
+   },
+   {
+    "key": "user.device.ip_address",
+    "name": "IP Address",
+    "description": "Unique identifier related to device connection.",
+    "parent": "user.device"
+   },
+   {
+    "key": "user.financial.bank_account",
+    "name": "Bank Account Information",
+    "description": "Bank account information belonging to the subject.",
+    "parent": "user.financial"
+   },
+   {
+    "key": "user.financial.credit_card",
+    "name": "Credit Card Information",
+    "description": "Credit card information belonging to the subject.",
+    "parent": "user.financial"
+   },
+   {
+    "key": "user.government_id.birth_certificate",
+    "name": "Birth Certificate",
+    "description": "State issued certificate of birth.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.government_id.drivers_license_number",
+    "name": "Driver's License Number",
+    "description": "State issued driving identification number.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.government_id.immigration",
+    "name": "Immigration ID",
+    "description": "State issued immigration or residency data.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.government_id.national_identification_number",
+    "name": "National Identification Number",
+    "description": "State issued personal identification number.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.government_id.passport_number",
+    "name": "Passport Number",
+    "description": "State issued passport data.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.government_id.vehicle_registration",
+    "name": "Vehicle Registration",
+    "description": "State issued license plate or vehicle registration data.",
+    "parent": "user.government_id"
+   },
+   {
+    "key": "user.health_and_medical.genetic",
+    "name": "User's Genetic Data",
+    "description": "Data about the genetic makeup provided by the subject.",
+    "parent": "user.health_and_medical"
+   },
+   {
+    "key": "user.health_and_medical.insurance_beneficiary_id",
+    "name": "Medical Insurance ID",
+    "description": "Health insurance beneficiary number of the subject.",
+    "parent": "user.health_and_medical"
+   },
+   {
+    "key": "user.health_and_medical.record_id",
+    "name": "Medical Record ID",
+    "description": "Medical record identifiers belonging to a subject.",
+    "parent": "user.health_and_medical"
+   },
+   {
+    "key": "user.location.imprecise",
+    "name": "Imprecise Subject Location",
+    "description": "Imprecise location derived from sensors (more than 500M).",
+    "parent": "user.location"
+   },
+   {
+    "key": "user.location.precise",
+    "name": "Precise Subject Location",
+    "description": "Precise location derived from sensors (less than 500M).",
+    "parent": "user.location"
+   },
+   {
+    "key": "user.name.first",
+    "name": "First Name",
+    "description": "Subject's first name.",
+    "parent": "user.name"
+   },
+   {
+    "key": "user.name.last",
+    "name": "Last Name",
+    "description": "Subject's last, or family, name.",
+    "parent": "user.name"
+   },
+   {
+    "key": "user.unique_id.pseudonymous",
+    "name": "Pseudonymous User ID",
+    "description": "A pseudonymous, or probabilistic identifier generated from other subject or device data belonging to the subject.",
+    "parent": "user.unique_id"
+   }
+  ]
+ },
+ "data_use": {
+  "label": "Data Uses",
+  "subtitle": "What the data is used for",
+  "nodes": [
+   {
+    "key": "analytics",
+    "name": "Analytics",
+    "description": "Provides analytics for activities such as system and advertising performance reporting, insights and fraud detection.",
+    "parent": null
+   },
+   {
+    "key": "analytics.reporting",
+    "name": "Analytics for Reporting",
+    "description": "Provides analytics for general reporting such as system and advertising performance.",
+    "parent": "analytics"
+   },
+   {
+    "key": "analytics.reporting.ad_performance",
+    "name": "Analytics for Advertising Performance",
+    "description": "Provides analytics for reporting of advertising performance.",
+    "parent": "analytics.reporting"
+   },
+   {
+    "key": "analytics.reporting.content_performance",
+    "name": "Analytics for Content Performance",
+    "description": "Analytics for reporting on content performance.",
+    "parent": "analytics.reporting"
+   },
+   {
+    "key": "analytics.reporting.campaign_insights",
+    "name": "Analytics for Insights",
+    "description": "Provides analytics for reporting of campaign insights related to advertising and promotion activities.",
+    "parent": "analytics.reporting"
+   },
+   {
+    "key": "analytics.reporting.system",
+    "name": "Analytics for System Activity",
+    "description": "Provides analytics for reporting on system activity.",
+    "parent": "analytics.reporting"
+   },
+   {
+    "key": "analytics.reporting.system.performance",
+    "name": "Analytics for System Performance",
+    "description": "Provides analytics for reporting on system performance.",
+    "parent": "analytics.reporting.system"
+   },
+   {
+    "key": "collect",
+    "name": "Collect",
+    "description": "Collects or stores data in order to use it for another purpose which has not yet been expressly defined.",
+    "parent": null
+   },
+   {
+    "key": "employment",
+    "name": "Employment",
+    "description": "Processes data for the purpose of recruitment or employment and human resources (HR) related activities.",
+    "parent": null
+   },
+   {
+    "key": "employment.recruitment",
+    "name": "Employment Recruitment",
+    "description": "Processes data of prospective employees for the purpose of recruitment.",
+    "parent": "employment"
+   },
+   {
+    "key": "essential",
+    "name": "Essential",
+    "description": "Operates the service or product, including legal obligations, support and basic system operations.",
+    "parent": null
+   },
+   {
+    "key": "essential.fraud_detection",
+    "name": "Essential Fraud Detection",
+    "description": "Detects possible fraud or misuse of the product, service, application or system.",
+    "parent": "essential"
+   },
+   {
+    "key": "essential.legal_obligation",
+    "name": "Essential Legal Obligation",
+    "description": "Provides service to meet a legal or compliance obligation such as consent management.",
+    "parent": "essential"
+   },
+   {
+    "key": "essential.service",
+    "name": "Essential for Service",
+    "description": "Provides the essential product, service, application or system, without which the product/service would not be possible.",
+    "parent": "essential"
+   },
+   {
+    "key": "essential.service.authentication",
+    "name": "Essential Service Authentication",
+    "description": "Authenticate users to the product, service, application or system.",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.notifications",
+    "name": "Essential Service Notifications",
+    "description": "Sends notifications about the product, service, application or system.",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.operations",
+    "name": "Essential for Operations",
+    "description": "Essential to ensure the operation of the product, service, application or system.",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.payment_processing",
+    "name": "Essential for Payment Processing",
+    "description": "Essential to processes payments for the product, service, application or system.",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.security",
+    "name": "Essential for Security",
+    "description": "Essential to provide security for the product, service, application or system",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.upgrades",
+    "name": "Essential for Service Upgrades",
+    "description": "Provides timely system upgrade information options.",
+    "parent": "essential.service"
+   },
+   {
+    "key": "essential.service.notifications.email",
+    "name": "Essential Email Service Notifications",
+    "description": "Sends email notifications about the product, service, application or system.",
+    "parent": "essential.service.notifications"
+   },
+   {
+    "key": "essential.service.notifications.sms",
+    "name": "Essential SMS Service Notifications",
+    "description": "Sends SMS notifications about the product, service, application or system.",
+    "parent": "essential.service.notifications"
+   },
+   {
+    "key": "essential.service.operations.support",
+    "name": "Essential for Operations Support",
+    "description": "Provides support for the product, service, application or system.",
+    "parent": "essential.service.operations"
+   },
+   {
+    "key": "essential.service.operations.improve",
+    "name": "Essential for Support Improvement",
+    "description": "Essential to optimize and improve support for the product, service, application or system.",
+    "parent": "essential.service.operations"
+   },
+   {
+    "key": "finance",
+    "name": "Finance",
+    "description": "Enables finance and accounting activities such as audits and tax reporting.",
+    "parent": null
+   },
+   {
+    "key": "functional",
+    "name": "Functional",
+    "description": "Used for specific, necessary, and legitimate purposes",
+    "parent": null
+   },
+   {
+    "key": "functional.storage",
+    "name": "Local Data Storage",
+    "description": "Stores or accesses information from the device as needed when using a product, service, application, or system",
+    "parent": "functional"
+   },
+   {
+    "key": "functional.service",
+    "name": "Service",
+    "description": "Functions relating to provided services, products, applications or systems.",
+    "parent": "functional"
+   },
+   {
+    "key": "functional.service.improve",
+    "name": "Improve Service",
+    "description": "Improves the specific product, service, application or system.",
+    "parent": "functional.service"
+   },
+   {
+    "key": "functional.storage.privacy_preferences",
+    "name": "Local Data Storage for Privacy Preferences",
+    "description": "Stores or accesses privacy preferences information from the device as needed when using a product, service, application, or system",
+    "parent": "functional.storage"
+   },
+   {
+    "key": "marketing",
+    "name": "Marketing",
+    "description": "Enables marketing, promotion, advertising and sales activities for the product, service, application or system.",
+    "parent": null
+   },
+   {
+    "key": "marketing.advertising",
+    "name": "Advertising, Marketing or Promotion",
+    "description": "Advertises or promotes the product, service, application or system and associated services.",
+    "parent": "marketing"
+   },
+   {
+    "key": "marketing.communications",
+    "name": "Marketing Communications",
+    "description": "Uses combined channels to message and market to a customer, user or prospect.",
+    "parent": "marketing"
+   },
+   {
+    "key": "marketing.advertising.first_party",
+    "name": "First Party Advertising",
+    "description": "Serves advertisements based on first party data collected or derived about the user.",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.frequency_capping",
+    "name": "Frequency Capping",
+    "description": "Restricts the number of times a specific advertisement is shown to an individual.",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.negative_targeting",
+    "name": "Negative Targeting",
+    "description": "Enforces rules used to ensure a certain audience or group is not targeted by advertising.",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.profiling",
+    "name": "Profiling for Advertising",
+    "description": "Creates audience profiles for the purpose of targeted advertising",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.serving",
+    "name": "Essential for Serving Ads",
+    "description": "Essential to the delivery of advertising and content.",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.third_party",
+    "name": "Third Party Advertising",
+    "description": "Serves advertisements based on data within the system or joined with data provided by 3rd parties.",
+    "parent": "marketing.advertising"
+   },
+   {
+    "key": "marketing.advertising.first_party.contextual",
+    "name": "First Party Contextual Advertising",
+    "description": "Serves advertisements based on current content being viewed by the user of the system or service.",
+    "parent": "marketing.advertising.first_party"
+   },
+   {
+    "key": "marketing.advertising.first_party.targeted",
+    "name": "First Party Personalized Advertising",
+    "description": "Targets advertisements based on data collected or derived about the user from use of the system.",
+    "parent": "marketing.advertising.first_party"
+   },
+   {
+    "key": "marketing.advertising.third_party.targeted",
+    "name": "Third Party Targeted Advertising",
+    "description": "Targets advertisements based on data within the system or joined with data provided by 3rd parties.",
+    "parent": "marketing.advertising.third_party"
+   },
+   {
+    "key": "marketing.communications.email",
+    "name": "Marketing Email Communications",
+    "description": "Sends email marketing communications.",
+    "parent": "marketing.communications"
+   },
+   {
+    "key": "marketing.communications.sms",
+    "name": "Marketing SMS Communications",
+    "description": "Sends SMS marketing communications.",
+    "parent": "marketing.communications"
+   },
+   {
+    "key": "operations",
+    "name": "Operations",
+    "description": "Supports business processes necessary to the organization's operation.",
+    "parent": null
+   },
+   {
+    "key": "personalize",
+    "name": "Personalize",
+    "description": "Personalizes the product, service, application or system.",
+    "parent": null
+   },
+   {
+    "key": "personalize.content",
+    "name": "Content Personalization",
+    "description": "Personalizes the content of the product, service, application or system.",
+    "parent": "personalize"
+   },
+   {
+    "key": "personalize.system",
+    "name": "System Personalization",
+    "description": "Personalizes the system.",
+    "parent": "personalize"
+   },
+   {
+    "key": "personalize.content.limited",
+    "name": "Limited Content Personalization",
+    "description": "Uses limited data for the purpose of serving content.",
+    "parent": "personalize.content"
+   },
+   {
+    "key": "personalize.content.profiling",
+    "name": "Profiling for Personalization",
+    "description": "Creates profiles for the purpose of serving content.",
+    "parent": "personalize.content"
+   },
+   {
+    "key": "personalize.content.profiled",
+    "name": "Targeted Content Personalization",
+    "description": "Uses profiles for the purpose of serving content.",
+    "parent": "personalize.content"
+   },
+   {
+    "key": "sales",
+    "name": "Sales",
+    "description": "Supports sales activities such as communications and outreach.",
+    "parent": null
+   },
+   {
+    "key": "third_party_sharing",
+    "name": "Third Party Sharing",
+    "description": "Transfers data to third parties outside of the system or service's scope.",
+    "parent": null
+   },
+   {
+    "key": "third_party_sharing.legal_obligation",
+    "name": "Sharing for Legal Obligation",
+    "description": "Shares data for legal obligations, including contracts, applicable laws or regulations.",
+    "parent": "third_party_sharing"
+   },
+   {
+    "key": "train_ai_system",
+    "name": "Train AI System",
+    "description": "Trains an AI system or data model for machine learning.",
+    "parent": null
+   }
+  ]
+ },
+ "data_subject": {
+  "label": "Data Subjects",
+  "subtitle": "Whose data it is",
+  "nodes": [
+   {
+    "key": "anonymous_user",
+    "name": "Anonymous User",
+    "description": "An individual that is unidentifiable to the systems. Note - This should only be applied to truly anonymous users where there is no risk of re-identification",
+    "parent": null
+   },
+   {
+    "key": "citizen_voter",
+    "name": "Citizen Voter",
+    "description": "An individual registered to voter with a state or authority.",
+    "parent": null
+   },
+   {
+    "key": "commuter",
+    "name": "Commuter",
+    "description": "An individual that is traveling or transiting in the context of location tracking.",
+    "parent": null
+   },
+   {
+    "key": "consultant",
+    "name": "Consultant",
+    "description": "An individual employed in a consultative/temporary capacity by the organization.",
+    "parent": null
+   },
+   {
+    "key": "customer",
+    "name": "Customer",
+    "description": "An individual or other organization that purchases goods or services from the organization.",
+    "parent": null
+   },
+   {
+    "key": "employee",
+    "name": "Employee",
+    "description": "An individual employed by the organization.",
+    "parent": null
+   },
+   {
+    "key": "job_applicant",
+    "name": "Job Applicant",
+    "description": "An individual applying for employment to the organization.",
+    "parent": null
+   },
+   {
+    "key": "next_of_kin",
+    "name": "Next of Kin",
+    "description": "A relative of any other individual subject where such a relationship is known.",
+    "parent": null
+   },
+   {
+    "key": "passenger",
+    "name": "Passenger",
+    "description": "An individual traveling on some means of provided transport.",
+    "parent": null
+   },
+   {
+    "key": "patient",
+    "name": "Patient",
+    "description": "An individual identified for the purposes of any medical care.",
+    "parent": null
+   },
+   {
+    "key": "prospect",
+    "name": "Prospect",
+    "description": "An individual or organization to whom an organization is selling goods or services.",
+    "parent": null
+   },
+   {
+    "key": "shareholder",
+    "name": "Shareholder",
+    "description": "An individual or organization that holds equity in the organization.",
+    "parent": null
+   },
+   {
+    "key": "supplier_vendor",
+    "name": "Supplier/Vendor",
+    "description": "An individual or organization that provides services or goods to the organization.",
+    "parent": null
+   },
+   {
+    "key": "trainee",
+    "name": "Trainee",
+    "description": "An individual undergoing training by the organization.",
+    "parent": null
+   },
+   {
+    "key": "visitor",
+    "name": "Visitor",
+    "description": "An individual visiting a location.",
+    "parent": null
+   }
+  ]
+ }
+}

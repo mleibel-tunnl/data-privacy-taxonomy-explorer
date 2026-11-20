@@ -1,0 +1,156 @@
+taxonomy,fides_key,name,parent_key,depth,description
+data_category,system,System Data,,0,"Data unique to, and under control of the system."
+data_category,system.authentication,Authentication Data,system,1,Data used to manage access to the system.
+data_category,system.operations,Operations Data,system,1,Data used for system operations.
+data_category,user,User Data,,0,"Data related to the user of the system, either provided directly or derived based on their usage."
+data_category,user.account,Account Information,user,1,Account creation or registration information.
+data_category,user.authorization,Authorization Information,user,1,Scope of permissions and access to a system.
+data_category,user.behavior,Observed Behavior,user,1,Behavioral data about the subject.
+data_category,user.biometric,Biometric Data,user,1,Encoded characteristics provided by a user.
+data_category,user.childrens,Children's Data,user,1,Data relating to children.
+data_category,user.contact,Contact Data,user,1,Contact data collected about a user.
+data_category,user.content,User Content,user,1,"Content related to, or created by the subject."
+data_category,user.demographic,Demographic Data,user,1,Demographic data about a user.
+data_category,user.location,Location Data,user,1,Records of the location of a user.
+data_category,user.device,Device Data,user,1,"Data related to a user's device, configuration and setting."
+data_category,user.payment,Payment Data,user,1,Payment data related to user.
+data_category,user.social,Social Data,user,1,Social activity and interaction data.
+data_category,user.unique_id,Unique ID,user,1,Unique identifier for a user assigned through system use.
+data_category,user.telemetry,Telemetry Data,user,1,User identifiable measurement data from system sensors and monitoring.
+data_category,user.user_sensor,User Sensor Data,user,1,Measurement data about a user's environment through system use.
+data_category,user.workplace,Workplace,user,1,Organization of employment.
+data_category,user.sensor,Sensor Data,user,1,Measurement data from sensors and monitoring systems.
+data_category,user.financial,Financial Data,user,1,Payment data and financial history.
+data_category,user.government_id,Government ID,user,1,State provided identification data.
+data_category,user.health_and_medical,Health and Medical Data,user,1,Health records or individual's personal medical information.
+data_category,user.name,Name,user,1,User's real name.
+data_category,user.criminal_history,Criminal History,user,1,Criminal records or information about the data subject.
+data_category,user.privacy_preferences,Privacy Preferences,user,1,Privacy preferences or settings set by the subject.
+data_category,user.job_title,Job Title,user,1,Professional data.
+data_category,user.account.settings,Account Settings,user.account,2,Account preferences and settings.
+data_category,user.account.username,Account Username,user.account,2,Username associated with account.
+data_category,user.authorization.credentials,Account password,user.authorization,2,Authentication credentials to a system.
+data_category,user.authorization.biometric,Biometric Credentials,user.authorization,2,Credentials for system authentication.
+data_category,user.authorization.password,Password,user.authorization,2,Password for system authentication.
+data_category,user.behavior.browsing_history,Browsing History,user.behavior,2,Content browsing history of a user.
+data_category,user.behavior.media_consumption,Media Consumption,user.behavior,2,Content consumption history of the subject.
+data_category,user.behavior.purchase_history,Purchase History,user.behavior,2,Purchase history of the subject.
+data_category,user.behavior.search_history,Search History,user.behavior,2,Search history of the subject.
+data_category,user.biometric.fingerprint,Fingerprint,user.biometric,2,Fingerprint encoded data about a subject.
+data_category,user.biometric.retinal,Retina Scan,user.biometric,2,Retinal data about a subject.
+data_category,user.biometric.voice,Voice Recording,user.biometric,2,Voice encoded data about a subject.
+data_category,user.biometric.health,Biometric Health Data,user.biometric,2,Encoded characteristic collected about a user.
+data_category,user.contact.address,User Contact Address,user.contact,2,Contact address data collected about a user.
+data_category,user.contact.email,User Contact Email,user.contact,2,User's contact email address.
+data_category,user.contact.phone_number,User Contact Phone Number,user.contact,2,User's phone number.
+data_category,user.contact.url,User Website,user.contact,2,Subject's websites or links to social and personal profiles.
+data_category,user.contact.fax_number,Fax Number,user.contact,2,Data Subject's fax number.
+data_category,user.contact.organization,Organization,user.contact,2,Data Subject's Organization.
+data_category,user.contact.address.city,User Contact City,user.contact.address,3,User's city level address data.
+data_category,user.contact.address.country,User Contact Country,user.contact.address,3,User's country level address data.
+data_category,user.contact.address.postal_code,User Contact Postal Code,user.contact.address,3,User's postal code.
+data_category,user.contact.address.state,User Contact State,user.contact.address,3,User's state level address data.
+data_category,user.contact.address.street,User Contact Street,user.contact.address,3,User's street level address data.
+data_category,user.content.private,Private Content,user.content,2,"Private content related to, or created by the subject, not publicly available."
+data_category,user.content.public,Public Content,user.content,2,"Publicly shared Content related to, or created by the subject."
+data_category,user.content.self_image,User Image,user.content,2,Photograph or image in which subject is whole or partially recognized.
+data_category,user.demographic.age_range,Age Range,user.demographic,2,Non specific age or age-range of data subject.
+data_category,user.demographic.date_of_birth,Birth Date,user.demographic,2,Date of birth of data subject.
+data_category,user.demographic.gender,Gender,user.demographic,2,Gender of data subject.
+data_category,user.demographic.language,Language,user.demographic,2,Spoken or written language of subject.
+data_category,user.demographic.marital_status,Marital Status,user.demographic,2,Marital status of data subject.
+data_category,user.demographic.political_opinion,Political Opinion,user.demographic,2,Political opinion or belief of data subject.
+data_category,user.demographic.profile,User Profile Data,user.demographic,2,Profile or preference information about the data subject.
+data_category,user.demographic.race_ethnicity,Race,user.demographic,2,Race or ethnicity of data subject.
+data_category,user.demographic.religious_belief,Religion,user.demographic,2,Religion or religious beliefs of the data subject.
+data_category,user.demographic.sexual_orientation,Sexual Orientation,user.demographic,2,Sexual orientation of data subject.
+data_category,user.device.cookie,Device Cookie,user.device,2,"Data related to a subject, stored within a cookie."
+data_category,user.device.cookie_id,Cookie ID,user.device,2,Cookie unique identification number.
+data_category,user.device.device_id,Device ID,user.device,2,Device unique identification number.
+data_category,user.device.ip_address,IP Address,user.device,2,Unique identifier related to device connection.
+data_category,user.financial.bank_account,Bank Account Information,user.financial,2,Bank account information belonging to the subject.
+data_category,user.financial.credit_card,Credit Card Information,user.financial,2,Credit card information belonging to the subject.
+data_category,user.government_id.birth_certificate,Birth Certificate,user.government_id,2,State issued certificate of birth.
+data_category,user.government_id.drivers_license_number,Driver's License Number,user.government_id,2,State issued driving identification number.
+data_category,user.government_id.immigration,Immigration ID,user.government_id,2,State issued immigration or residency data.
+data_category,user.government_id.national_identification_number,National Identification Number,user.government_id,2,State issued personal identification number.
+data_category,user.government_id.passport_number,Passport Number,user.government_id,2,State issued passport data.
+data_category,user.government_id.vehicle_registration,Vehicle Registration,user.government_id,2,State issued license plate or vehicle registration data.
+data_category,user.health_and_medical.genetic,User's Genetic Data,user.health_and_medical,2,Data about the genetic makeup provided by the subject.
+data_category,user.health_and_medical.insurance_beneficiary_id,Medical Insurance ID,user.health_and_medical,2,Health insurance beneficiary number of the subject.
+data_category,user.health_and_medical.record_id,Medical Record ID,user.health_and_medical,2,Medical record identifiers belonging to a subject.
+data_category,user.location.imprecise,Imprecise Subject Location,user.location,2,Imprecise location derived from sensors (more than 500M).
+data_category,user.location.precise,Precise Subject Location,user.location,2,Precise location derived from sensors (less than 500M).
+data_category,user.name.first,First Name,user.name,2,Subject's first name.
+data_category,user.name.last,Last Name,user.name,2,"Subject's last, or family, name."
+data_category,user.unique_id.pseudonymous,Pseudonymous User ID,user.unique_id,2,"A pseudonymous, or probabilistic identifier generated from other subject or device data belonging to the subject."
+data_use,analytics,Analytics,,0,"Provides analytics for activities such as system and advertising performance reporting, insights and fraud detection."
+data_use,analytics.reporting,Analytics for Reporting,analytics,1,Provides analytics for general reporting such as system and advertising performance.
+data_use,analytics.reporting.ad_performance,Analytics for Advertising Performance,analytics.reporting,2,Provides analytics for reporting of advertising performance.
+data_use,analytics.reporting.content_performance,Analytics for Content Performance,analytics.reporting,2,Analytics for reporting on content performance.
+data_use,analytics.reporting.campaign_insights,Analytics for Insights,analytics.reporting,2,Provides analytics for reporting of campaign insights related to advertising and promotion activities.
+data_use,analytics.reporting.system,Analytics for System Activity,analytics.reporting,2,Provides analytics for reporting on system activity.
+data_use,analytics.reporting.system.performance,Analytics for System Performance,analytics.reporting.system,3,Provides analytics for reporting on system performance.
+data_use,collect,Collect,,0,Collects or stores data in order to use it for another purpose which has not yet been expressly defined.
+data_use,employment,Employment,,0,Processes data for the purpose of recruitment or employment and human resources (HR) related activities.
+data_use,employment.recruitment,Employment Recruitment,employment,1,Processes data of prospective employees for the purpose of recruitment.
+data_use,essential,Essential,,0,"Operates the service or product, including legal obligations, support and basic system operations."
+data_use,essential.fraud_detection,Essential Fraud Detection,essential,1,"Detects possible fraud or misuse of the product, service, application or system."
+data_use,essential.legal_obligation,Essential Legal Obligation,essential,1,Provides service to meet a legal or compliance obligation such as consent management.
+data_use,essential.service,Essential for Service,essential,1,"Provides the essential product, service, application or system, without which the product/service would not be possible."
+data_use,essential.service.authentication,Essential Service Authentication,essential.service,2,"Authenticate users to the product, service, application or system."
+data_use,essential.service.notifications,Essential Service Notifications,essential.service,2,"Sends notifications about the product, service, application or system."
+data_use,essential.service.operations,Essential for Operations,essential.service,2,"Essential to ensure the operation of the product, service, application or system."
+data_use,essential.service.payment_processing,Essential for Payment Processing,essential.service,2,"Essential to processes payments for the product, service, application or system."
+data_use,essential.service.security,Essential for Security,essential.service,2,"Essential to provide security for the product, service, application or system"
+data_use,essential.service.upgrades,Essential for Service Upgrades,essential.service,2,Provides timely system upgrade information options.
+data_use,essential.service.notifications.email,Essential Email Service Notifications,essential.service.notifications,3,"Sends email notifications about the product, service, application or system."
+data_use,essential.service.notifications.sms,Essential SMS Service Notifications,essential.service.notifications,3,"Sends SMS notifications about the product, service, application or system."
+data_use,essential.service.operations.support,Essential for Operations Support,essential.service.operations,3,"Provides support for the product, service, application or system."
+data_use,essential.service.operations.improve,Essential for Support Improvement,essential.service.operations,3,"Essential to optimize and improve support for the product, service, application or system."
+data_use,finance,Finance,,0,Enables finance and accounting activities such as audits and tax reporting.
+data_use,functional,Functional,,0,"Used for specific, necessary, and legitimate purposes"
+data_use,functional.storage,Local Data Storage,functional,1,"Stores or accesses information from the device as needed when using a product, service, application, or system"
+data_use,functional.service,Service,functional,1,"Functions relating to provided services, products, applications or systems."
+data_use,functional.service.improve,Improve Service,functional.service,2,"Improves the specific product, service, application or system."
+data_use,functional.storage.privacy_preferences,Local Data Storage for Privacy Preferences,functional.storage,2,"Stores or accesses privacy preferences information from the device as needed when using a product, service, application, or system"
+data_use,marketing,Marketing,,0,"Enables marketing, promotion, advertising and sales activities for the product, service, application or system."
+data_use,marketing.advertising,"Advertising, Marketing or Promotion",marketing,1,"Advertises or promotes the product, service, application or system and associated services."
+data_use,marketing.communications,Marketing Communications,marketing,1,"Uses combined channels to message and market to a customer, user or prospect."
+data_use,marketing.advertising.first_party,First Party Advertising,marketing.advertising,2,Serves advertisements based on first party data collected or derived about the user.
+data_use,marketing.advertising.frequency_capping,Frequency Capping,marketing.advertising,2,Restricts the number of times a specific advertisement is shown to an individual.
+data_use,marketing.advertising.negative_targeting,Negative Targeting,marketing.advertising,2,Enforces rules used to ensure a certain audience or group is not targeted by advertising.
+data_use,marketing.advertising.profiling,Profiling for Advertising,marketing.advertising,2,Creates audience profiles for the purpose of targeted advertising
+data_use,marketing.advertising.serving,Essential for Serving Ads,marketing.advertising,2,Essential to the delivery of advertising and content.
+data_use,marketing.advertising.third_party,Third Party Advertising,marketing.advertising,2,Serves advertisements based on data within the system or joined with data provided by 3rd parties.
+data_use,marketing.advertising.first_party.contextual,First Party Contextual Advertising,marketing.advertising.first_party,3,Serves advertisements based on current content being viewed by the user of the system or service.
+data_use,marketing.advertising.first_party.targeted,First Party Personalized Advertising,marketing.advertising.first_party,3,Targets advertisements based on data collected or derived about the user from use of the system.
+data_use,marketing.advertising.third_party.targeted,Third Party Targeted Advertising,marketing.advertising.third_party,3,Targets advertisements based on data within the system or joined with data provided by 3rd parties.
+data_use,marketing.communications.email,Marketing Email Communications,marketing.communications,2,Sends email marketing communications.
+data_use,marketing.communications.sms,Marketing SMS Communications,marketing.communications,2,Sends SMS marketing communications.
+data_use,operations,Operations,,0,Supports business processes necessary to the organization's operation.
+data_use,personalize,Personalize,,0,"Personalizes the product, service, application or system."
+data_use,personalize.content,Content Personalization,personalize,1,"Personalizes the content of the product, service, application or system."
+data_use,personalize.system,System Personalization,personalize,1,Personalizes the system.
+data_use,personalize.content.limited,Limited Content Personalization,personalize.content,2,Uses limited data for the purpose of serving content.
+data_use,personalize.content.profiling,Profiling for Personalization,personalize.content,2,Creates profiles for the purpose of serving content.
+data_use,personalize.content.profiled,Targeted Content Personalization,personalize.content,2,Uses profiles for the purpose of serving content.
+data_use,sales,Sales,,0,Supports sales activities such as communications and outreach.
+data_use,third_party_sharing,Third Party Sharing,,0,Transfers data to third parties outside of the system or service's scope.
+data_use,third_party_sharing.legal_obligation,Sharing for Legal Obligation,third_party_sharing,1,"Shares data for legal obligations, including contracts, applicable laws or regulations."
+data_use,train_ai_system,Train AI System,,0,Trains an AI system or data model for machine learning.
+data_subject,anonymous_user,Anonymous User,,0,An individual that is unidentifiable to the systems. Note - This should only be applied to truly anonymous users where there is no risk of re-identification
+data_subject,citizen_voter,Citizen Voter,,0,An individual registered to voter with a state or authority.
+data_subject,commuter,Commuter,,0,An individual that is traveling or transiting in the context of location tracking.
+data_subject,consultant,Consultant,,0,An individual employed in a consultative/temporary capacity by the organization.
+data_subject,customer,Customer,,0,An individual or other organization that purchases goods or services from the organization.
+data_subject,employee,Employee,,0,An individual employed by the organization.
+data_subject,job_applicant,Job Applicant,,0,An individual applying for employment to the organization.
+data_subject,next_of_kin,Next of Kin,,0,A relative of any other individual subject where such a relationship is known.
+data_subject,passenger,Passenger,,0,An individual traveling on some means of provided transport.
+data_subject,patient,Patient,,0,An individual identified for the purposes of any medical care.
+data_subject,prospect,Prospect,,0,An individual or organization to whom an organization is selling goods or services.
+data_subject,shareholder,Shareholder,,0,An individual or organization that holds equity in the organization.
+data_subject,supplier_vendor,Supplier/Vendor,,0,An individual or organization that provides services or goods to the organization.
+data_subject,trainee,Trainee,,0,An individual undergoing training by the organization.
+data_subject,visitor,Visitor,,0,An individual visiting a location.
