@@ -54,21 +54,23 @@ input[type=search]::placeholder{color:var(--text-muted)}
 .crumbs .sep{opacity:.5}
 .crumbs .cur{color:var(--text-primary);font-weight:600;padding:2px 5px}
 
-.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap;max-width:1320px}
+.stage{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
 .chartwrap{flex:1 1 560px;min-width:340px;position:relative}
-svg{display:block;width:100%;height:auto;max-height:72vh;touch-action:manipulation}
+/* height is set from JS to fill the viewport; labels are sized in screen px via --u */
+svg#sun{display:block;width:100%;height:640px;touch-action:manipulation}
 svg path.arc{cursor:pointer;stroke:var(--surface-1);stroke-width:2;stroke-linejoin:round;
   transition:opacity .12s ease}
 svg path.arc:hover{opacity:.82}
 svg path.arc.dim{opacity:.18}
 svg path.arc.hit{stroke:var(--text-primary);stroke-width:2.4}
-svg text.lab{font-size:9.5px;fill:#0b0b0b;pointer-events:none;font-weight:560;
-  paint-order:stroke;stroke:rgba(255,255,255,.72);stroke-width:2.4px;stroke-linejoin:round}
-svg text.center-k{font-size:12px;fill:var(--text-muted);text-anchor:middle;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-svg text.center-n{font-size:15px;fill:var(--text-primary);text-anchor:middle;font-weight:650}
+svg text.lab{font-size:calc(12px * var(--u,1));font-weight:560;pointer-events:none;text-anchor:middle}
+svg text.lab.sm{font-size:calc(10.5px * var(--u,1))}
+svg text.lab.dim{opacity:.25}
+svg text.center-k{font-size:calc(12px * var(--u,1));fill:var(--text-muted);text-anchor:middle;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+svg text.center-n{font-size:calc(16px * var(--u,1));fill:var(--text-primary);text-anchor:middle;font-weight:650}
 svg circle.hub{fill:var(--surface-1);cursor:pointer}
 
-.side{flex:0 1 310px;min-width:260px;border:1px solid var(--border);border-radius:10px;
+.side{flex:1 1 310px;min-width:260px;border:1px solid var(--border);border-radius:10px;
   background:var(--surface-2);padding:14px 15px}
 .side .kk{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text-secondary);
   word-break:break-all;margin:0 0 6px}
@@ -103,7 +105,10 @@ td.d{color:var(--text-secondary)}
 .viz-root.embed{padding:10px 12px 10px;gap:10px}
 .viz-root.embed header{display:none}
 .viz-root.embed .stage{gap:14px}
-.viz-root.embed .side{flex-basis:100%}
+@media (min-width:1000px){
+  .stage{flex-wrap:nowrap}
+  .side{flex:0 0 320px;max-height:var(--chart-h,none);overflow:auto}
+}
 .viz-root.embed footer{padding-top:8px;font-size:11.5px}
 a.ghost{text-decoration:none}
 footer{color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);padding-top:12px}
@@ -178,10 +183,10 @@ function build(key){
   });
   // depth + leaf weight
   (function walk(n, d){
-    n.depth = d; n.leaves = 0;
+    n.depth = d; n.leaves = 0; n.height = 0;
     n.children.sort((a,b)=> a.name.localeCompare(b.name));
     if(!n.children.length){ n.leaves = 1; return; }
-    n.children.forEach(c => { walk(c, d+1); n.leaves += c.leaves; });
+    n.children.forEach(c => { walk(c, d+1); n.leaves += c.leaves; n.height = Math.max(n.height, c.height+1); });
   })(virtual, 0);
   // Seed hues at the shallowest level that actually has branches to tell apart
   // (data_category has only 2 roots, so seeding at depth 1 would paint it one colour).
@@ -207,14 +212,53 @@ function assignColor(node, i, seedLevel){
   const slot = (i % PAL.length);
   (function paint(x){ x.slot = slot; x.band = band; x.seedLevel = seedLevel; x.children.forEach(paint); })(node);
 }
-function hueOf(node){
-  if(node.slot === -1 || node.slot === undefined)
-    return 'color-mix(in oklab, var(--text-muted) 32%, var(--surface-1))';
-  const base = `var(${PAL[node.slot]})`;
+/* Colours are mixed here (oklab) rather than with CSS color-mix() so that the
+   label ink can be chosen per wedge from the actual fill luminance. */
+let THEME = null;
+function readTheme(){
+  const cs = getComputedStyle(document.querySelector('.viz-root'));
+  const g = name => hexRgb(cs.getPropertyValue(name).trim());
+  THEME = {pal: PAL.map(g), surface: g('--surface-1'), muted: g('--text-muted')};
+}
+function hexRgb(h){
+  h = h.replace('#',''); if(h.length===3) h = h.replace(/./g,'$&$&');
+  const v = parseInt(h,16); return [v>>16&255, v>>8&255, v&255];
+}
+function lin(c){ c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+function delin(c){ c = c<=0.0031308 ? 12.92*c : 1.055*Math.pow(c,1/2.4)-0.055;
+  return Math.round(Math.max(0, Math.min(1, c))*255); }
+function oklab(rgb){
+  const [r,g,b] = rgb.map(lin);
+  const l = Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b),
+        m = Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b),
+        s = Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b);
+  return [0.2104542553*l+0.7936177850*m-0.0040720468*s,
+          1.9779984951*l-2.4285922050*m+0.4505937099*s,
+          0.0259040371*l+0.7827717662*m-0.8086757660*s];
+}
+function srgb([L,a,b]){
+  const l = Math.pow(L+0.3963377774*a+0.2158037573*b,3),
+        m = Math.pow(L-0.1055613458*a-0.0638541728*b,3),
+        s = Math.pow(L-0.0894841775*a-1.2914855480*b,3);
+  return [delin( 4.0767416621*l-3.3077115913*m+0.2309699292*s),
+          delin(-1.2684380046*l+2.6097574011*m-0.3413193965*s),
+          delin(-0.0041960863*l-0.7034186147*m+1.7076147010*s)];
+}
+function mix(c1, c2, t){ const a = oklab(c1), b = oklab(c2); return srgb(a.map((v,i) => v*t + b[i]*(1-t))); }
+function fillOf(node){
+  if(!THEME) readTheme();
+  if(node.slot === -1 || node.slot === undefined) return mix(THEME.muted, THEME.surface, 0.32);
+  const base = THEME.pal[node.slot];
   const rel = Math.max(0, node.depth - (node.seedLevel||1));
   const lighten = Math.min(0.64, rel*0.19 + (node.band ? 0.32 : 0));
-  return lighten <= 0 ? base
-    : `color-mix(in oklab, ${base} ${Math.round((1-lighten)*100)}%, var(--surface-1))`;
+  return lighten <= 0 ? base : mix(base, THEME.surface, 1-lighten);
+}
+function hueOf(node){ return 'rgb(' + fillOf(node).join(',') + ')'; }
+function inkOf(node){
+  // black or white, whichever has the higher WCAG contrast against the fill
+  const [r,g,b] = fillOf(node).map(lin);
+  const L = 0.2126*r + 0.7152*g + 0.0722*b;
+  return (L+0.05)/0.05 >= 1.05/(L+0.05) ? '#111' : '#fff';
 }
 
 /* ---------- layout ---------- */
@@ -222,7 +266,7 @@ function layout(root, f){
   // angular extents relative to focus f: f spans full circle
   const out = [];
   const depth0 = f.depth;
-  const maxRings = 4;
+  const maxRings = MAX_RINGS;
   function rec(n, a0, a1){
     const rel = n.depth - depth0;
     if(rel >= 0 && rel <= maxRings && n !== f){
@@ -256,48 +300,117 @@ function arcPath(a0,a1,r0,r1){
 }
 
 /* ---------- render ---------- */
-const R0 = 118, RW = 92;
+// viewBox is -500..500. R0 = hub radius, RMAX = outer edge of the last ring.
+const R0 = 92, RMAX = 490, MAX_RINGS = 4;
+const LABEL_PX = 12, SANS = 'ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
+const FONT = '560 12px ' + SANS, FONT_SM = '560 10.5px ' + SANS;
+const measureCtx = document.createElement('canvas').getContext('2d');
+function textPx(t, font){ measureCtx.font = font || FONT; return measureCtx.measureText(t).width; }
+function fitText(t, maxPx, font){
+  if(maxPx <= 0) return null;
+  if(textPx(t, font) <= maxPx) return t;
+  for(let n = t.length-1; n >= 3; n--){
+    const c = t.slice(0, n).trimEnd() + '…';
+    if(textPx(c, font) <= maxPx) return c;
+  }
+  return null;
+}
+// Ring radii below the focus. Grey rings above the hue seed level are thin.
+// Leaves extend to RMAX (see outerOf), so shallow leaves get the room their
+// names need and the circle is filled even when only one branch is deep.
+function ringRadii(f, root){
+  const n = Math.max(1, Math.min(MAX_RINGS, f.height));
+  const w = [];
+  for(let i = 1; i <= n; i++) w.push(f.depth + i < root.seedLevel ? 0.55 : 1);
+  const sum = w.reduce((a,b) => a+b, 0), unit = (RMAX - R0) / sum;
+  const r = [R0];
+  w.forEach(x => r.push(r[r.length-1] + x*unit));
+  return r;
+}
+// px per viewBox unit (viewBox is square, preserveAspectRatio = meet)
+function outerOf(s, radii){ return s.n.children.length ? radii[s.ring] : radii[radii.length-1]; }
+function pxPerUnit(){
+  const b = svg.getBoundingClientRect();
+  return Math.min(b.width, b.height) / 1000;
+}
+function sizeChart(){
+  const stage = document.getElementById('chartstage');
+  if(stage.classList.contains('hidden')) return;
+  const top = svg.getBoundingClientRect().top + window.scrollY;
+  const foot = document.getElementById('foot');
+  const reserve = EMBED ? foot.offsetHeight + 22 : 28;
+  const h = Math.max(480, Math.round(window.innerHeight - top - reserve));
+  svg.style.height = h + 'px';
+  document.querySelector('.viz-root').style.setProperty('--chart-h', h + 'px');
+}
+
 function render(){
   const root = roots[taxKey];
   const f = focus || root;
   const segs = layout(root, f);
+  const radii = ringRadii(f, root);
   const ql = query.trim().toLowerCase();
-  let parts = [];
+  const k = pxPerUnit();
+  svg.style.setProperty('--u', k ? (1/k).toFixed(4) : 1);
+  const parts = [];
 
   segs.forEach(s => {
-    const r0 = R0 + (s.ring-1)*RW, r1 = r0 + RW;
-    const d = arcPath(s.a0, s.a1, r0, r1);
+    const d = arcPath(s.a0, s.a1, radii[s.ring-1], outerOf(s, radii));
     if(!d) return;
-    const hit = ql && matches(s.n, ql);
-    const cls = 'arc' + (ql ? (hit ? ' hit' : ' dim') : '');
+    s.hit = ql && matches(s.n, ql);
+    const cls = 'arc' + (ql ? (s.hit ? ' hit' : ' dim') : '');
     parts.push(`<path class="${cls}" d="${d}" fill="${hueOf(s.n)}" data-k="${esc(s.n.key)}"></path>`);
   });
 
-  // labels for wedges with room
-  segs.forEach(s => {
-    const span = s.a1 - s.a0;
-    const r0 = R0 + (s.ring-1)*RW, r1 = r0 + RW;
-    const rm = (r0+r1)/2;
-    if(span * rm < 34) return;
-    const mid = (s.a0+s.a1)/2;
-    const px = (rm*Math.sin(mid)).toFixed(2), py = (-rm*Math.cos(mid)).toFixed(2);
-    let deg = mid*180/Math.PI - 90;
-    let flip = 0;
-    if(deg > 90){ deg -= 180; flip = 1; }
-    if(deg < -90){ deg += 180; flip = 1; }
-    const maxChars = Math.max(3, Math.floor((span*rm)/5.4));
-    let txt = s.n.name;
-    if(txt.length > maxChars) txt = txt.slice(0, Math.max(3,maxChars-1)).trimEnd()+'…';
-    parts.push(`<g transform="translate(${px},${py}) rotate(${deg.toFixed(1)})"><text class="lab" text-anchor="middle" dy="3.4">${esc(txt)}</text></g>`);
+  // Labels: measured in screen px. Each wedge gets whichever orientation —
+  // along the arc (tangential) or along the radius — shows more of its name.
+  if(k) segs.forEach(s => {
+    const r0 = radii[s.ring-1], r1 = outerOf(s, radii);
+    const span = s.a1 - s.a0, rm = (r0 + r1)/2, depthPx = (r1 - r0)*k;
+    const fsU = LABEL_PX / k, padU = 6 / k;
+    const name = s.n.name;
+    // available length per orientation (null = orientation doesn't fit at all)
+    let tanLen = null, radLen = null;
+    if(depthPx >= LABEL_PX * 1.5){
+      // straight text tangent at rm: ends must stay inside the outer radius and the wedge
+      const byRing = 2*Math.sqrt(Math.max(0, (r1-padU)*(r1-padU) - rm*rm));
+      const byWedge = span >= Math.PI ? Infinity : 2*rm*Math.tan(Math.max(0, span/2 - 0.01));
+      tanLen = Math.min(byRing, byWedge)*k - 4;
+    }
+    // radial text starts where the wedge is wide enough for a line of text, so
+    // narrow-at-the-base leaves that widen outward still get a label
+    const rStart = Math.max(r0 + padU, (LABEL_PX * 1.15) / (span * k || 1));
+    if(rStart < r1 - padU) radLen = (r1 - rStart)*k - 6;
+    const rRad = (rStart + r1 - padU) / 2;
+    // preference: full name at 12px (tangential first), then full name at 10.5px,
+    // then the longest truncation at 12px
+    const opts = [];
+    if(tanLen !== null) opts.push({o:'tan', len:tanLen});
+    if(radLen !== null) opts.push({o:'rad', len:radLen});
+    let pick = null;
+    for(const o of opts) if(!pick && textPx(name) <= o.len) pick = {o:o.o, txt:name, sm:false};
+    for(const o of opts) if(!pick && textPx(name, FONT_SM) <= o.len) pick = {o:o.o, txt:name, sm:true};
+    if(!pick) opts.forEach(o => { const t = fitText(name, o.len);
+      if(t && (!pick || t.length > pick.txt.length)) pick = {o:o.o, txt:t, sm:false}; });
+    if(!pick) return;
+    const txt = pick.txt, midDeg = ((s.a0 + s.a1)/2) * 180/Math.PI;
+    let deg;
+    if(pick.o === 'tan'){ deg = midDeg; if(midDeg > 90 && midDeg < 270) deg -= 180; }
+    else { deg = midDeg - 90; if(midDeg > 180) deg -= 180; }
+    const mid = (s.a0 + s.a1)/2, rt = pick.o === 'rad' ? rRad : rm;
+    const px = (rt*Math.sin(mid)).toFixed(2), py = (-rt*Math.cos(mid)).toFixed(2);
+    const cls = 'lab' + (pick.sm ? ' sm' : '') + (ql && !s.hit ? ' dim' : '');
+    parts.push(`<text class="${cls}" fill="${inkOf(s.n)}" dy="0.35em" transform="translate(${px},${py}) rotate(${deg.toFixed(1)})">${esc(txt)}</text>`);
   });
 
   // hub
   const hubName = f === root ? TAXONOMY[taxKey].label : f.name;
   const hubKey  = f === root ? `${f.total} terms` : f.key;
+  const hubW = k ? (R0*2 - 24)*k : 160;
   parts.push(`<circle class="hub" r="${R0-6}" data-up="1"></circle>`);
-  parts.push(`<text class="center-n" y="-2">${esc(clip(hubName,22))}</text>`);
-  parts.push(`<text class="center-k" y="18">${esc(clip(hubKey,26))}</text>`);
-  if(f !== root) parts.push(`<text class="center-k" y="36">↑ click to zoom out</text>`);
+  parts.push(`<text class="center-n" y="${(-4/(k||1)).toFixed(1)}">${esc(fitText(hubName, hubW, '650 16px ui-sans-serif,-apple-system,sans-serif') || '')}</text>`);
+  parts.push(`<text class="center-k" y="${(14/(k||1)).toFixed(1)}">${esc(fitText(hubKey, hubW, '12px ui-monospace,Menlo,monospace') || '')}</text>`);
+  if(f !== root) parts.push(`<text class="center-k" y="${(30/(k||1)).toFixed(1)}">↑ zoom out</text>`);
 
   svg.innerHTML = parts.join('');
   drawCrumbs(f, root);
@@ -413,6 +526,7 @@ vt.addEventListener('click', () => {
   vt.textContent = on ? 'Sunburst view' : 'Table view';
   document.getElementById('chartstage').classList.toggle('hidden', on);
   document.getElementById('tablestage').classList.toggle('hidden', !on);
+  if(!on){ sizeChart(); render(); }
 });
 const tt = document.getElementById('themetoggle');
 if(matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme='dark';
@@ -420,7 +534,7 @@ if(P.get('theme')==='dark' || P.get('theme')==='light') document.documentElement
 function syncTheme(){ tt.textContent = document.documentElement.dataset.theme==='dark' ? 'Light' : 'Dark'; }
 tt.addEventListener('click', () => {
   document.documentElement.dataset.theme = document.documentElement.dataset.theme==='dark'?'light':'dark';
-  syncTheme(); render();
+  syncTheme(); readTheme(); render();
 });
 syncTheme();
 
@@ -440,7 +554,12 @@ document.getElementById('foot').innerHTML = EMBED
   'lighter shades = deeper levels. Table view carries every term, key, parent and description.';
 
 Object.keys(TAXONOMY).forEach(k => { if(k.indexOf('__')!==0) roots[k] = build(k); });
-render(); renderTable();
+sizeChart(); render(); renderTable();
+// re-fit on resize (Notion resizes the embed block); one render per frame
+let rq = 0;
+function refit(){ if(rq) return; rq = requestAnimationFrame(() => { rq = 0; sizeChart(); render(); }); }
+window.addEventListener('resize', refit);
+if(window.ResizeObserver) new ResizeObserver(refit).observe(document.querySelector('.chartwrap'));
 })();
 </script>
 </body>

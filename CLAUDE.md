@@ -35,18 +35,28 @@ python scripts/build.py            # after every src/shell.html change
 | Concern | Function / selector |
 |---|---|
 | Palette + theming | `.viz-root` custom properties (`--s1`…`--s8`, surfaces, text) |
-| Flat list → tree, leaf weights, hue seeding | `build()`, `assignColor()`, `hueOf()` |
-| Angular extents, ring assignment | `layout()`, constants `R0`, `RW`, `maxRings` |
+| Flat list → tree, leaf weights, hue seeding | `build()`, `assignColor()` |
+| Fill colours (oklab mixing in JS) + per-wedge label ink | `fillOf()`, `hueOf()`, `inkOf()`, `readTheme()` |
+| Angular extents, ring radii | `layout()`, `ringRadii()`, `outerOf()`, constants `R0`, `RMAX`, `MAX_RINGS` |
+| Chart height + px-per-unit scaling | `sizeChart()`, `pxPerUnit()`, `--u` CSS var, `refit()` |
+| Label orientation / fitting | label block in `render()`, `fitText()`, `textPx()` |
 | SVG arc geometry | `arcPath()` |
 | Draw pass (rebuilds `svg.innerHTML`) | `render()` |
 | Hover tooltip | `svg` `mousemove` handler, `#tip` |
 | Side panel | `showDetail()` |
 | Breadcrumbs | `drawCrumbs()` |
 | Taxonomy tabs, search, table, theme | bottom block after `/* taxonomy picker */` |
+| URL options (`?embed`, `?tax=`, `?theme=`) | `P` / `EMBED` near the top of the IIFE |
 
 ## Conventions
 
 - Wedge angle = **leaf count** beneath a node, not term count.
+- Leaves extend to the outer edge (`outerOf`), so shallow leaves have label room.
+- Labels are sized in **screen px** (12px, 10.5px fallback), not viewBox units —
+  `--u` = viewBox units per px. Each wedge picks tangential or radial text,
+  whichever shows more of the name, measured with canvas `measureText`.
+- Hosted on GitHub Pages from `main` (public repo); Notion embeds `?embed` URLs
+  at full-width (~1200–1700px). Check layouts at those widths.
 - Hues are seeded at the first level with ≥3 children; rings above that are
   grey. Data Categories only has 2 roots, so a naive "hue = top-level branch"
   rule paints it one color.
@@ -55,7 +65,7 @@ python scripts/build.py            # after every src/shell.html change
 - Any palette change must be re-validated for colorblind separation — don't pick
   hues by eye. Three light-mode hues are already under 3:1 contrast, which is
   why slice labels and the table view are required relief.
-- Plain ES5-ish JS in an IIFE, no build tooling for the page itself. Keep it
+- Plain modern (ES2019) JS in an IIFE, no build tooling for the page itself. Keep it
   that way unless there's a reason not to.
 
 ## Verifying a change

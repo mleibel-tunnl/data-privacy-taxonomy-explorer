@@ -96,22 +96,34 @@ and the only place the full description text is always readable.
   circle. Renders at most `maxRings = 4` rings below the focus.
 - `arcPath(a0,a1,r0,r1)` — SVG arc path with a small angular pad for the 2px
   gap between wedges. Has a special case for a full 360° ring.
+- `ringRadii(focus)` — ring boundaries between `R0 = 92` and `RMAX = 490`
+  (viewBox `-500 -500 1000 1000`). Rings above the hue seed level are thinner
+  (0.55×); the ring count follows the focus subtree's height, so zooming in
+  makes rings wider. Leaves extend to `RMAX` (`outerOf`).
 - `render()` — rebuilds `svg.innerHTML` wholesale. Cheap enough at 85 nodes;
   if it ever feels slow, that's the thing to change first.
-- Geometry constants: `R0 = 118` (hub radius), `RW = 92` (ring width), viewBox
-  `-500 -500 1000 1000`.
+- `sizeChart()` — sets the SVG height to fill the viewport below the controls
+  (min 480px); re-run on resize via `refit()` / `ResizeObserver`.
 
-Labels are drawn only when `span * midRadius >= 34` px of arc, rotated to the
-wedge, flipped on the left half, and truncated to a character budget derived
-from arc length. Everything else relies on the hover tooltip.
+Labels are sized in screen pixels: `--u` (viewBox units per px) scales a 12px
+font. For each wedge, both orientations are measured with canvas
+`measureText` — tangential (straight text across the wedge, kept inside the
+outer radius) and radial (starting where the wedge is wide enough for a line
+of text). Preference: full name at 12px, then full name at 10.5px, then the
+longest truncation. Ink is black or white by WCAG contrast against the fill,
+which is why fills are mixed in JS (oklab) instead of CSS `color-mix()`.
+
+*Fixed 2026-11-20:* labels used to be sized in viewBox units (≈5px on screen
+in a Notion embed) and their length budget was measured along the arc while
+the text was drawn along the radius.
 
 ## 5. Known gaps / rough edges
 
 - **Zoom is instantaneous.** No tween between layouts. A rAF angle interpolation
   would make drilling in much more legible.
-- **Outer-ring labels truncate hard** (`User C…`, five of them in a row under
-  Contact Data). Needs either a leader-line treatment, a radial label outside the
-  ring, or dropping labels past ring 3 entirely.
+- **Some labels still truncate at the top level**: the five `User Contact …`
+  address leaves (ring 4) and a few narrow mid-ring parents (`Observed…`,
+  `Health and…`). They read in full after zooming in, and in the tooltip.
 - **`maxRings = 4` silently clips.** Nothing in the UI tells you there's more
   below. Fine at depth 4; a lurking bug if the taxonomy deepens.
 - **No deep linking.** Focus, taxonomy and search aren't in the URL, so you
