@@ -52,7 +52,7 @@ python scripts/build.py            # after every src/shell.html change
 
 - Wedge angle = **leaf count** beneath a node, not term count.
 - Leaves extend to the outer edge (`outerOf`), so shallow leaves have label room.
-- Labels are sized in **screen px** (12px, 10.5px fallback), not viewBox units —
+- Labels are sized in **screen px** (13px, 11.5px fallback), not viewBox units —
   `--u` = viewBox units per px. Each wedge picks tangential or radial text,
   whichever shows more of the name, measured with canvas `measureText`.
 - Hosted on GitHub Pages from `main` (public repo); Notion embeds `?embed` URLs
@@ -62,9 +62,11 @@ python scripts/build.py            # after every src/shell.html change
   rule paints it one color.
 - Categorical hues are assigned in **fixed slot order and never cycled**. Past 8
   branches, use a second lighter *band* of the same hues (see `assignColor`).
-- Any palette change must be re-validated for colorblind separation — don't pick
-  hues by eye. Three light-mode hues are already under 3:1 contrast, which is
-  why slice labels and the table view are required relief.
+- The palette is **muted slate/blue on purpose** (the vivid one was too busy).
+  Slots alternate dark/light so ring neighbours separate on lightness. Any
+  change must go through `scripts/palette.py` (adjacent-slot ΔE under CVD
+  simulation) — don't pick by eye. Several slots are pale against the surface,
+  which is why slice labels and the table view are required relief.
 - Plain modern (ES2019) JS in an IIFE, no build tooling for the page itself. Keep it
   that way unless there's a reason not to.
 

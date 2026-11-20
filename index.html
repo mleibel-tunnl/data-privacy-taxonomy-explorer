@@ -9,15 +9,17 @@
   color-scheme: light;
   --surface-1:#fcfcfb; --surface-2:#f2f1ee; --border:#dedcd5;
   --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#78776f;
-  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
-  --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+  /* muted slate/blue, ordered dark/light/dark/... so ring neighbours separate on
+     lightness (min adjacent CVD dE 14.4 - see NOTES.md §3 before changing) */
+  --s1:#355d89; --s2:#98b6cb; --s3:#6a798c; --s4:#beccda;
+  --s5:#394860; --s6:#6e9bbd; --s7:#656d74; --s8:#94c2db;
 }
 :root[data-theme="dark"] .viz-root{
   color-scheme: dark;
   --surface-1:#1a1a19; --surface-2:#242423; --border:#3a3a38;
   --text-primary:#f0efec; --text-secondary:#c3c2b7; --text-muted:#908f85;
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
-  --s5:#d55181; --s6:#0ca30c; --s7:#9085e9; --s8:#e66767;
+  --s1:#3d6692; --s2:#92afc5; --s3:#707f92; --s4:#b5c3d1;
+  --s5:#3e4e66; --s6:#6e9bbd; --s7:#6b727a; --s8:#91bfd8;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
@@ -63,8 +65,8 @@ svg path.arc{cursor:pointer;stroke:var(--surface-1);stroke-width:2;stroke-linejo
 svg path.arc:hover{opacity:.82}
 svg path.arc.dim{opacity:.18}
 svg path.arc.hit{stroke:var(--text-primary);stroke-width:2.4}
-svg text.lab{font-size:calc(12px * var(--u,1));font-weight:560;pointer-events:none;text-anchor:middle}
-svg text.lab.sm{font-size:calc(10.5px * var(--u,1))}
+svg text.lab{font-size:calc(13px * var(--u,1));font-weight:560;pointer-events:none;text-anchor:middle}
+svg text.lab.sm{font-size:calc(11.5px * var(--u,1))}
 svg text.lab.dim{opacity:.25}
 svg text.center-k{font-size:calc(12px * var(--u,1));fill:var(--text-muted);text-anchor:middle;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 svg text.center-n{font-size:calc(16px * var(--u,1));fill:var(--text-primary);text-anchor:middle;font-weight:650}
@@ -250,7 +252,8 @@ function fillOf(node){
   if(node.slot === -1 || node.slot === undefined) return mix(THEME.muted, THEME.surface, 0.32);
   const base = THEME.pal[node.slot];
   const rel = Math.max(0, node.depth - (node.seedLevel||1));
-  const lighten = Math.min(0.64, rel*0.19 + (node.band ? 0.32 : 0));
+  // gentler than a vivid palette needs: pale slots would wash into the surface
+  const lighten = Math.min(0.5, rel*0.16 + (node.band ? 0.22 : 0));
   return lighten <= 0 ? base : mix(base, THEME.surface, 1-lighten);
 }
 function hueOf(node){ return 'rgb(' + fillOf(node).join(',') + ')'; }
@@ -302,8 +305,8 @@ function arcPath(a0,a1,r0,r1){
 /* ---------- render ---------- */
 // viewBox is -500..500. R0 = hub radius, RMAX = outer edge of the last ring.
 const R0 = 92, RMAX = 490, MAX_RINGS = 4;
-const LABEL_PX = 12, SANS = 'ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
-const FONT = '560 12px ' + SANS, FONT_SM = '560 10.5px ' + SANS;
+const LABEL_PX = 13, SANS = 'ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
+const FONT = '560 13px ' + SANS, FONT_SM = '560 11.5px ' + SANS;
 const measureCtx = document.createElement('canvas').getContext('2d');
 function textPx(t, font){ measureCtx.font = font || FONT; return measureCtx.measureText(t).width; }
 function fitText(t, maxPx, font){

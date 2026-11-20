@@ -74,16 +74,21 @@ whole chart came out one color. `build()` instead walks down to the first level
 with ≥3 children and seeds hues there; rings above the seed level are grey.
 Data Categories seeds at depth 2, Data Uses at depth 1.
 
-**Palette is validated, not eyeballed.** Eight categorical hues from a palette
-checked for colorblind separation (worst adjacent CVD ΔE 9.1, normal-vision ΔE
-19.6) and a lightness band. Hues are assigned in fixed slot order and **never
-cycled** — past 8 branches (Data Uses has 12) a second, lighter *band* of the
-same hues is used, so the same hue+shade never repeats in one ring. Depth is
-encoded by mixing toward the surface color via `color-mix(in oklab, …)`.
+**Palette is validated, not eyeballed.** Eight muted slate/blue slots
+(max OKLCH chroma 0.085), replacing an earlier vivid 8-hue palette on
+2026-11-20 because it read as busy. With hue nearly constant, branches are told
+apart by **lightness**: slots are ordered dark/light/dark/… so neighbours in a
+ring always differ. `scripts/palette.py` generates and checks them — worst
+adjacent-slot ΔE (OKLab ×100) is 15.0 normal / 14.4 under deuteranopia in light
+mode, 13.3 / 12.6 in dark (the old vivid palette's worst CVD ΔE was 9.1).
+Hues are assigned in fixed slot order and **never cycled** — past 8 branches
+(Data Uses has 12) a second, lighter *band* (+22%) of the same slots is used.
+Depth is encoded by mixing toward the surface in oklab (16% per level, capped
+at 50%), done in JS so label ink can be chosen per fill.
 
-Three of the light-mode hues sit under 3:1 contrast against the surface, which
-is why slice labels and the table view are both non-negotiable — they're the
-relief path for anyone who can't separate the fills.
+Several slots are deliberately pale (contrast vs surface down to ~1.6:1), so a
+wedge is defined by its neighbours and the 2px gaps rather than against the
+background — slice labels and the table view remain the relief path.
 
 **Table view is a first-class view, not a fallback.** Same data, searchable,
 and the only place the full description text is always readable.
@@ -105,11 +110,11 @@ and the only place the full description text is always readable.
 - `sizeChart()` — sets the SVG height to fill the viewport below the controls
   (min 480px); re-run on resize via `refit()` / `ResizeObserver`.
 
-Labels are sized in screen pixels: `--u` (viewBox units per px) scales a 12px
+Labels are sized in screen pixels: `--u` (viewBox units per px) scales a 13px
 font. For each wedge, both orientations are measured with canvas
 `measureText` — tangential (straight text across the wedge, kept inside the
 outer radius) and radial (starting where the wedge is wide enough for a line
-of text). Preference: full name at 12px, then full name at 10.5px, then the
+of text). Preference: full name at 13px, then full name at 11.5px, then the
 longest truncation. Ink is black or white by WCAG contrast against the fill,
 which is why fills are mixed in JS (oklab) instead of CSS `color-mix()`.
 
@@ -151,8 +156,8 @@ Roughly in order of payoff:
    between fideslang 2.x and 3.x". This is the thing the IAB page can't do at
    all, and probably the most genuinely useful feature here.
 4. **Swap in Tunnl brand colors** — the palette slots are CSS custom properties
-   (`--s1`…`--s8`) at the top of `src/shell.html`. Any replacement should be
-   re-validated for CVD separation rather than picked by eye.
+   (`--s1`…`--s8`) at the top of `src/shell.html`. Generate and validate any
+   replacement with `scripts/palette.py` rather than picking by eye.
 5. **Overlay our own coverage** — join an internal mapping of which Tunnl data
    elements map to which `fides_key`, and shade covered vs. uncovered branches.
    That turns this from a reference viewer into an actual gap analysis.
